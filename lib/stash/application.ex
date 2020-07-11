@@ -9,8 +9,10 @@ defmodule Stash.Application do
     Confex.resolve_env!(:stash)
 
     children = [
+      Stash.CommandedApp,
       # Start the Ecto repository
       Stash.Repo,
+      Stash.CommandedSupervisor,
       # Start the Telemetry supervisor
       Stash.Web.Telemetry,
       # Start the PubSub system
@@ -26,7 +28,7 @@ defmodule Stash.Application do
     opts = [strategy: :one_for_one, name: Stash.Supervisor]
     case Supervisor.start_link(children, opts) do
       {:ok, _} = res ->
-        Market.Platform.TelemetryReporter.setup()
+        Stash.TelemetryReporter.setup()
         res
       err_res -> err_res
     end

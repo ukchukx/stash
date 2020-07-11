@@ -1,5 +1,6 @@
 use Mix.Config
 
+config :stash, env: :prod
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
@@ -59,10 +60,3 @@ config :logger,
 #       force_ssl: [hsts: true]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
-
-config :stash, Stash.Repo,
-  username: {:system, "STASH_DB_USER"},
-  password: {:system, "STASH_DB_PASS"},
-  database: {:system, "STASH_READ_DB"},
-  hostname: {:system, "STASH_DB_HOST"},
-  pool_size: {:system, :integer, "STASH_DB_POOL_SIZE"}

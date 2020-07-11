@@ -7,8 +7,24 @@
 # General application configuration
 use Mix.Config
 
+config :stash, :router,
+  timeout: 10_000
+
 config :stash,
-  ecto_repos: [Stash.Repo]
+  ecto_repos: [Stash.Repo],
+  event_stores: [Stash.EventStore]
+
+config :commanded_ecto_projections, repo: Stash.Repo
+
+config :commanded, event_store_adapter: Commanded.EventStore.Adapters.EventStore
+
+config :stash, Stash.CommandedApp,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: Stash.EventStore
+  ],
+  pub_sub: :local,
+  registry: :local
 
 # Configures the endpoint
 config :stash, Stash.Web.Endpoint,
@@ -22,6 +38,34 @@ config :stash, Stash.Web.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :logger,
+  utc_log: true,
+  truncate: :infinity
+
+pool_size = "STASH_DB_POOL_SIZE" |> System.get_env |> String.to_integer
+
+config :stash, Stash.Repo,
+  truncate_read_tables_query: """
+    TRUNCATE TABLE
+      users,
+      projection_versions
+    RESTART IDENTITY;
+    """,
+  migration_timestamps: [type: :utc_datetime_usec],
+  username: {:system, "STASH_DB_USER"},
+  password: {:system, "STASH_DB_PASS"},
+  database: {:system, "STASH_READ_DB"},
+  hostname: {:system, "STASH_DB_HOST"},
+  pool_size: pool_size
+
+config :stash, Stash.EventStore,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: {:system, "STASH_DB_USER"},
+  password: {:system, "STASH_DB_PASS"},
+  database: {:system, "STASH_EVENT_DB"},
+  hostname: {:system, "STASH_DB_HOST"},
+  pool_size: pool_size
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason

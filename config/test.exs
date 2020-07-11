@@ -1,17 +1,18 @@
 use Mix.Config
 
+config :stash, env: :test
+
 config :bcrypt_elixir, :log_rounds, 4
-# Configure your database
-#
-# The MIX_TEST_PARTITION environment variable can be used
-# to provide built-in test partitioning in CI environment.
-# Run `mix help test` for more information.
+
+config :commanded, assert_receive_event_timeout: 5_000
+
+config :stash, Stash.EventStore,
+  database: {:system, "STASH_TEST_EVENT_DB"},
+  pool_size: 5
+
 config :stash, Stash.Repo,
-  username: {:system, "STASH_DB_USER"},
-  password: {:system, "STASH_DB_PASS"},
   database: {:system, "STASH_TEST_READ_DB"},
-  hostname: {:system, "STASH_DB_HOST"},
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool_size: 5
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

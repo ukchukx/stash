@@ -1,13 +1,9 @@
 use Mix.Config
 
-# Configure your database
+config :stash, env: :dev
+
 config :stash, Stash.Repo,
-  username: {:system, "STASH_DB_USER"},
-  password: {:system, "STASH_DB_PASS"},
-  database: {:system, "STASH_DB"},
-  hostname: {:system, "STASH_DB_HOST"},
-  show_sensitive_data_on_connection_error: true,
-  pool_size: {:system, :integer, "STASH_DB_POOL_SIZE"}
+  show_sensitive_data_on_connection_error: true
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

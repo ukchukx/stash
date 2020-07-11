@@ -1,4 +1,4 @@
-defmodule Stash.Web.TelemetryReporter do
+defmodule Stash.TelemetryReporter do
   require Logger
 
   def setup do
