@@ -9,6 +9,7 @@ defmodule Stash.CommandedSupervisor do
     Supervisor.init([
       Projectors.User,
       Projectors.Book,
+      Projectors.Movie,
       EventHandlers.Telemetry
     ], strategy: :one_for_one)
   end

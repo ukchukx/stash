@@ -1,6 +1,6 @@
 defmodule Stash.Router do
   alias Stash.Middleware.{Telemetry, Uniqueness, Validate}
-  alias Stash.Aggregates.{User, Book}
+  alias Stash.Aggregates.{User, Book, Movie}
   alias Stash.Commands.{
     CreateUser,
     DisableUser,
@@ -8,7 +8,10 @@ defmodule Stash.Router do
     UpdateUser,
     CreateBook,
     UpdateBook,
-    DeleteBook
+    DeleteBook,
+    CreateMovie,
+    UpdateMovie,
+    DeleteMovie
   }
 
   use Commanded.Commands.Router
@@ -19,6 +22,7 @@ defmodule Stash.Router do
 
   identify User, by: :user_id,   prefix: "user-"
   identify Book, by: :book_id,   prefix: "book-"
+  identify Movie, by: :movie_id,   prefix: "movie-"
 
   dispatch [
     CreateUser,
@@ -32,4 +36,10 @@ defmodule Stash.Router do
     UpdateBook,
     DeleteBook
   ], to: Book, lifespan: Book, timeout: Application.get_env(:stash, :router)[:timeout]
+
+  dispatch [
+    CreateMovie,
+    UpdateMovie,
+    DeleteMovie
+  ], to: Movie, lifespan: Movie, timeout: Application.get_env(:stash, :router)[:timeout]
 end

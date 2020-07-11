@@ -50,6 +50,7 @@ config :stash, Stash.Repo,
     TRUNCATE TABLE
       users,
       books,
+      movies,
       projection_versions
     RESTART IDENTITY;
     """,
