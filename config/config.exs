@@ -49,6 +49,7 @@ config :stash, Stash.Repo,
   truncate_read_tables_query: """
     TRUNCATE TABLE
       users,
+      books,
       projection_versions
     RESTART IDENTITY;
     """,
@@ -57,7 +58,9 @@ config :stash, Stash.Repo,
   password: {:system, "STASH_DB_PASS"},
   database: {:system, "STASH_READ_DB"},
   hostname: {:system, "STASH_DB_HOST"},
-  pool_size: pool_size
+  pool_size: pool_size,
+  charset: "utf8mb4",
+  collation: "utf8mb4_unicode_ci"
 
 config :stash, Stash.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
@@ -65,7 +68,9 @@ config :stash, Stash.EventStore,
   password: {:system, "STASH_DB_PASS"},
   database: {:system, "STASH_EVENT_DB"},
   hostname: {:system, "STASH_DB_HOST"},
-  pool_size: pool_size
+  pool_size: pool_size,
+  charset: "utf8mb4",
+  collation: "utf8mb4_unicode_ci"
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
