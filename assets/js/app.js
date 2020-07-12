@@ -28,9 +28,12 @@
 // window.liveSocket = liveSocket;
 
 import Vue from 'vue';
+import VueCompositionAPI from '@vue/composition-api';
 import axios from 'axios';
 
-import Test from '@/components/Test';
+import Signin from '@/components/Signin';
+import Signup from '@/components/Signup';
+import Stash from '@/components/Stash';
 
 Vue.config.productionTip = false;
 
@@ -39,6 +42,10 @@ if (token) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 }
 
-Vue.component(Test.name, Test);
+Vue.use(VueCompositionAPI);
+
+Vue.component(Signin.name, Signin);
+Vue.component(Signup.name, Signup);
+Vue.component(Stash.name, Stash);
 
 new Vue({ el: '#app' });

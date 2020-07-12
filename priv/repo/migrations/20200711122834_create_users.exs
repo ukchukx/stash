@@ -5,8 +5,8 @@ defmodule Stash.Repo.Migrations.CreateUsers do
     create table(:users, primary_key: false) do
       add :id, :uuid, primary_key: true
       add :active, :boolean
-      add :email, :string, size: 50
-      add :password, :string, size: 100
+      add :email, :string
+      add :password, :string
 
       timestamps(type: :utc_datetime)
     end

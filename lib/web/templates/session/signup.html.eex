@@ -1,0 +1,3 @@
+<div id="app" class="w-full">
+ <signup error-message="<%= get_flash(@conn, :error)%>" form-path="<%= @path %>" />
+</div>

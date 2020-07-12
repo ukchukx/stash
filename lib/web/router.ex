@@ -22,9 +22,13 @@ defmodule Stash.Web.Router do
 
     get "/", PageController, :index
 
+    get "/signup", SessionController, :signup
+    post "/signup", SessionController, :create_account
     get "/signin", SessionController, :signin
     post "/signin", SessionController, :create_session
     get "/signout", SessionController, :delete_session
+
+    get "/*path", PageController, :catch_all
   end
 
   # Other scopes may use custom stacks.

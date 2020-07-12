@@ -1,0 +1,6 @@
+<div id="app">
+ <stash
+  :books="<%= Jason.encode!(@books) %>"
+  :movies="<%= Jason.encode!(@movies) %>"
+  :user="<%= Jason.encode!(@user) %>" />
+</div>

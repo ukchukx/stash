@@ -3,7 +3,7 @@ defmodule Stash.Web.PageController do
 
   alias Stash.{Books, Movies}
 
-  def index(%{assigns: %{current_user: %{id: user_id} = user}} = conn, _) do
+  def index(%{assigns: %{current_user: %{"id" => user_id} = user}} = conn, _) do
     books = Books.books_for_user(user_id)
     movies = Movies.movies_for_user(user_id)
 
