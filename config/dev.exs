@@ -2,8 +2,7 @@ use Mix.Config
 
 config :stash, env: :dev
 
-config :stash, Stash.Repo,
-  show_sensitive_data_on_connection_error: true
+config :stash, Stash.Repo, show_sensitive_data_on_connection_error: true
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -17,13 +16,7 @@ config :stash, Stash.Web.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
-      cd: Path.expand("../assets", __DIR__)
-    ]
+    npm: ["run", "watch", cd: Path.expand("../assets", __DIR__)]
   ]
 
 # ## SSL Support
