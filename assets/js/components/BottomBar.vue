@@ -42,28 +42,29 @@
 </template>
 <script>
 import { reactive, computed } from '@vue/composition-api';
+import eventBus from '@/eventBus';
 
 export default {
   name: 'BottomBar',
   props: {
-    selected: {
+    selectedTab: {
       type: String,
       default: () => 'movies'
     }
   },
-  setup(props, { emit }) {
+  setup(props) {
     const commonClasses = 'no-underline inline-block text-center py-4 border-b';
     let defaultClasses = 'opacity-50 text-gray-600 md:opacity-100 border-transparent hover:opacity-100';
     defaultClasses = `md:hover:border-gray-600 ${defaultClasses} ${commonClasses}`;
     const activeClasses = `text-blue-600 border-blue-600 ${commonClasses}`;
 
-    const moviesSelected = computed(() => props.selected === 'movies');
-    const booksSelected = computed(() => props.selected === 'books');
-    const accountSelected = computed(() => props.selected === 'account');
+    const moviesSelected = computed(() => props.selectedTab === 'movies');
+    const booksSelected = computed(() => props.selectedTab === 'books');
+    const accountSelected = computed(() => props.selectedTab === 'account');
 
-    const selectMovies = () => emit('moviesSelected');
-    const selectBooks = () => emit('booksSelected');
-    const selectAccounts = () => emit('accountSelected');
+    const selectMovies = () => eventBus.$emit('movies-selected');
+    const selectBooks = () => eventBus.$emit('books-selected');
+    const selectAccounts = () => eventBus.$emit('account-selected');
 
     const state = reactive({
       movieClasses: computed(() => moviesSelected.value ? activeClasses : defaultClasses),

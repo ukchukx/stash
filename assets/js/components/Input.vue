@@ -10,7 +10,7 @@
       :class="classes" 
       :type="type" 
       :placeholder="placeholder">
-    <InputErrors :errors="errors" class="mt-2" />
+    <InputErrors v-show="showErrors" :errors="errors" class="mt-2" />
   </div>
 </template>
 <script>
@@ -51,6 +51,10 @@ export default {
     name: {
       type: String,
       default: () => ''
+    },
+    showErrors: {
+      type: Boolean,
+      default: () => true
     }
   },
   setup(props, { emit }) {
@@ -65,7 +69,7 @@ export default {
     const nonErrorClasses = `${defaultClasses} focus:shadow-outline`;
     const errorClasses = `${defaultClasses} border-red-500`;
 
-    const classes = computed(() => errors.value.length ? errorClasses : nonErrorClasses);
+    const classes = computed(() => errors.value.length && props.showErrors ? errorClasses : nonErrorClasses);
 
     watchEffect(() => emit('errors', errors.value));
 

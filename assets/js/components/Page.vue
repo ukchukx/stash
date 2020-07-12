@@ -11,13 +11,15 @@
           </div>
         </div>
        </div>
-      <BottomBar />
+      <BottomBar :selectedTab="state.selectedTab" />
     </div>
   </div>
 </template>
 <script>
 import TopBar from '@/components/TopBar';
 import BottomBar from '@/components/BottomBar';
+import eventBus from '@/eventBus';
+import { reactive } from '@vue/composition-api';
 
 export default {
   name: 'Page',
@@ -30,6 +32,25 @@ export default {
       type: String,
       default: () => 'Guest'
     }
+  },
+  setup() {
+    const state = reactive({
+      selectedTab: 'movies'
+    });
+
+    eventBus.$on('movies-selected', () => {
+      state.selectedTab = 'movies';
+    });
+    eventBus.$on('books-selected', () => {
+      state.selectedTab = 'books';
+    });
+    eventBus.$on('account-selected', () => {
+      state.selectedTab = 'account';
+    });
+
+    return {
+      state
+    };
   }
 };
 </script>

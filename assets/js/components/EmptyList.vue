@@ -35,7 +35,7 @@ export default {
   },
   setup({ resource }, { emit }) {
     const addClicked = () => {
-      emit(resource === 'books' ? 'addBook' : 'addMovie');
+      emit(resource === 'books' ? 'add-book' : 'add-movie');
     };
 
     return {

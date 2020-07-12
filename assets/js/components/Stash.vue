@@ -1,17 +1,25 @@
 <template>
   <!-- eslint-disable -->
   <Page :username="user.email">
-    <EmptyList resource="movies" />
+    <Movies v-show="showMovies" :initial-movies="movies" />
+    <Books v-show="showBooks" :initial-books="books" />
+    <Account v-show="showAccount" />
   </Page>
 </template>
 <script>
+import { reactive, computed } from '@vue/composition-api';
 import Page from '@/components/Page';
-import EmptyList from '@/components/EmptyList';
+import Movies from '@/components/Movies';
+import Books from '@/components/Books';
+import Account from '@/components/Account';
+import eventBus from '@/eventBus';
 
 export default {
   name: 'Stash',
   components: {
-    EmptyList,
+    Account,
+    Books,
+    Movies,
     Page
   },
   props: {
@@ -27,6 +35,32 @@ export default {
       type: Array,
       required: true
     }
+  },
+  setup() {
+    const state = reactive({
+      selectedTab: 'movies'
+    });
+
+    eventBus.$on('movies-selected', () => {
+      state.selectedTab = 'movies';
+    });
+    eventBus.$on('books-selected', () => {
+      state.selectedTab = 'books';
+    });
+    eventBus.$on('account-selected', () => {
+      state.selectedTab = 'account';
+    });
+
+    const showMovies = computed(() => state.selectedTab === 'movies');
+    const showBooks = computed(() => state.selectedTab === 'books');
+    const showAccount = computed(() => state.selectedTab === 'account');
+
+    return {
+      state,
+      showMovies,
+      showBooks,
+      showAccount
+    };
   }
 };
 </script>
