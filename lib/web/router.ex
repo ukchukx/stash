@@ -8,6 +8,7 @@ defmodule Stash.Web.Router do
     plug :put_root_layout, {Stash.Web.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Stash.Web.Plugs.LoadCurrentUser
   end
 
   pipeline :api do
@@ -17,7 +18,13 @@ defmodule Stash.Web.Router do
   scope "/", Stash.Web do
     pipe_through :browser
 
-    live "/", PageLive, :index
+    # live "/", PageLive, :index
+
+    get "/", PageController, :index
+
+    get "/signin", SessionController, :signin
+    post "/signin", SessionController, :create_session
+    get "/signout", SessionController, :delete_session
   end
 
   # Other scopes may use custom stacks.
