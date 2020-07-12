@@ -1,9 +1,19 @@
 <template>
-  <h3>User is {{ user.email }}</h3>
+  <!-- eslint-disable -->
+  <Page :username="user.email">
+    <EmptyList resource="movies" />
+  </Page>
 </template>
 <script>
+import Page from '@/components/Page';
+import EmptyList from '@/components/EmptyList';
+
 export default {
   name: 'Stash',
+  components: {
+    EmptyList,
+    Page
+  },
   props: {
     user: {
       type: Object,
