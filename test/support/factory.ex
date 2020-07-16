@@ -33,7 +33,6 @@ defmodule Stash.Factory do
       tags: [Faker.Lorem.word(), Faker.Lorem.word()],
       title: Faker.Commerce.product_name(),
       imdb_id: 6 |> Faker.Lorem.characters |> to_string(),
-      trailer: Faker.Internet.image_url(),
       thumbnail: Faker.Internet.image_url()
     }
   end

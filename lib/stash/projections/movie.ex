@@ -7,7 +7,6 @@ defmodule Stash.Projections.Movie do
     :id,
     :title,
     :imdb_id,
-    :trailer,
     :tags,
     :thumbnail,
     :inserted_at,
@@ -20,7 +19,6 @@ defmodule Stash.Projections.Movie do
     field :user_id, :binary_id
     field :title, :string
     field :imdb_id, :string
-    field :trailer, :string
     field :thumbnail, :string
     field :tags, {:array, :string}, default: []
 

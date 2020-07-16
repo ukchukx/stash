@@ -11,4 +11,6 @@ defmodule Stash.Web.PageController do
   end
 
   def index(conn, _), do: redirect(conn, to: Routes.session_path(conn, :signin))
+
+  def catch_all(conn, _), do: redirect(conn, to: Routes.page_path(conn, :index))
 end

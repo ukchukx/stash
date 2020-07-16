@@ -25,7 +25,6 @@ defmodule Stash.MovieTest do
       assert movie.title == updated_movie.title
       assert movie.imdb_id == updated_movie.imdb_id
       assert movie.thumbnail == updated_movie.thumbnail
-      assert movie.trailer == updated_movie.trailer
       # Changed
       assert updated_movie.tags == params.tags
     end

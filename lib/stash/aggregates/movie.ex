@@ -1,5 +1,5 @@
 defmodule Stash.Aggregates.Movie do
-  defstruct [:id, :imdb_id, :title, :trailer, :thumbnail, :tags, :user_id, deleted: false]
+  defstruct [:id, :imdb_id, :title, :thumbnail, :tags, :user_id, deleted: false]
 
   alias Stash.Commands.{
     DeleteMovie,
@@ -21,7 +21,6 @@ defmodule Stash.Aggregates.Movie do
       movie_id: command.movie_id,
       imdb_id: command.imdb_id,
       title: command.title,
-      trailer: command.trailer,
       tags: command.tags,
       thumbnail: command.thumbnail,
     }
@@ -52,7 +51,6 @@ defmodule Stash.Aggregates.Movie do
       user_id: e.user_id,
       imdb_id: e.imdb_id,
       title: e.title,
-      trailer: e.trailer,
       tags: e.tags,
       thumbnail: e.thumbnail,
     }

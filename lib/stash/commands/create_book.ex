@@ -105,7 +105,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
     end
   end
 
-  defp validate_thumbnail(nil), do: [{:thumbnail, "is not a URI"}]
+  defp validate_thumbnail(nil), do: []
 
   defp validate_thumbnail(thumbnail) do
     case URIValidator.validate(thumbnail) do

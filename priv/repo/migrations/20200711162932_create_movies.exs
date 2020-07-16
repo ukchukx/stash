@@ -7,7 +7,6 @@ defmodule Stash.Repo.Migrations.CreateMovies do
       add :user_id, :uuid
       add :title, :string, size: 100
       add :thumbnail, :string
-      add :trailer, :string
       add :imdb_id, :string, size: 20
       add :tags, {:array, :string}, default: []
 

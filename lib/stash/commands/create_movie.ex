@@ -1,5 +1,5 @@
 defmodule Stash.Commands.CreateMovie do
-  defstruct [:user_id, :movie_id, :imdb_id, :title, :trailer, :thumbnail, :tags]
+  defstruct [:user_id, :movie_id, :imdb_id, :title, :thumbnail, :tags]
 
   def assign_id(%__MODULE__{} = command, id), do: %__MODULE__{command | movie_id: id}
 
@@ -36,7 +36,6 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateMovie do
     user_id
     |> validate_user_id
     |> Kernel.++(validate_movie_id(movie_id))
-    |> Kernel.++(validate_trailer(command.trailer))
     |> Kernel.++(validate_thumbnail(command.thumbnail))
     |> Kernel.++(validate_tags(command.tags))
     |> Kernel.++(validate_imdb_id(command.imdb_id))
@@ -69,17 +68,6 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateMovie do
     case ListValidator.validate_list_of_string(tags) do
       :ok           -> []
       {:error, err} -> [{:tags, err}]
-    end
-  end
-
-  defp validate_trailer(""), do: []
-
-  defp validate_trailer(nil), do: [{:trailer, "is not a string"}]
-
-  defp validate_trailer(trailer) do
-    case StringValidator.validate(trailer) do
-      :ok           -> []
-      {:error, err} -> [{:trailer, err}]
     end
   end
 
