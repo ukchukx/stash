@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   parserOptions: {
+    parser: 'babel-eslint',
     ecmaVersion: 2017
   },
   env: {
@@ -64,6 +65,7 @@ module.exports = {
     'no-trailing-spaces': 'off',
     'import/prefer-default-export': 'off',
     'linebreak-style': 'off',
-    'no-continue': 'off'
+    'no-continue': 'off',
+    'implicit-arrow-linebreak': 'off'
   }
 }

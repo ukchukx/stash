@@ -1,17 +1,27 @@
 <template>
   <!-- eslint-disable -->
-  <BookList v-if="hasBooks" :books="books" />
-  <EmptyList v-else resource="books" @add-book="addBook" />
+  <div> 
+    <div v-show="showList">
+      <button v-show="hasBooks" class="btn btn-white ml-4 my-3 w-20" @click="showAddBookView">Add</button>
+      <BookList v-show="hasBooks" :books="state.books" />
+      <EmptyList v-show="!hasBooks" resource="books" @add-book="showAddBookView" />
+    </div>
+    <div v-show="showNew">
+      <AddBook @book-added="bookAdded" @closed="closeAddBookView" />
+    </div>
+  </div>
 </template>
 <script>
-import { computed, ref } from '@vue/composition-api';
+import { computed, reactive } from '@vue/composition-api';
 import EmptyList from '@/components/EmptyList';
 import BookList from '@/components/BookList';
+import AddBook from '@/components/AddBook';
 import eventBus from '@/eventBus';
 
 export default {
   name: 'Books',
   components: {
+    AddBook,
     BookList,
     EmptyList
   },
@@ -22,18 +32,36 @@ export default {
     }
   },
   setup(props) {
-    const books = ref(props.initialBooks);
-    const hasBooks = computed(() => !!books.value.length);
-    const addBook = () => true;
+    const state = reactive({
+      books: props.initialBooks,
+      view: 'list'
+    });
+    const hasBooks = computed(() => !!state.books.length);
+    const showList = computed(() => state.view === 'list');
+    const showNew = computed(() => state.view === 'new');
+    
+    const showAddBookView = () => {
+      state.view = 'new';
+    };
+    const closeAddBookView = () => {
+      state.view = 'list';
+    };
+    const bookAdded = (book) => {
+      state.books.push(book);
+    };
 
     eventBus.$on('book-deleted', (bookId) => {
-      books.value = books.value.filter(({ id }) => id !== bookId);
+      state.books = state.books.filter(({ id }) => id !== bookId);
     });
     
     return {
-      books,
+      state,
       hasBooks,
-      addBook
+      showAddBookView,
+      closeAddBookView,
+      showList,
+      showNew,
+      bookAdded
     };
   }
 };

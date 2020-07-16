@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable -->
   <Page :username="user.email">
-    <Movies v-show="showMovies" :initial-movies="movies" />
+    <Movies v-show="showMovies" :initial-movies="movies" :tmdb-token="tmdbToken" />
     <Books v-show="showBooks" :initial-books="books" />
     <Account v-show="showAccount" />
   </Page>
@@ -33,6 +33,10 @@ export default {
     },
     books: {
       type: Array,
+      required: true
+    },
+    tmdbToken: {
+      type: String,
       required: true
     }
   },

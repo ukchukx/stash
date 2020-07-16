@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import { computed, watchEffect } from '@vue/composition-api';
+import { computed, watch } from '@vue/composition-api';
 import useInputValidator from '@/features/useInputValidator';
 import InputErrors from '@/components/InputErrors';
 
@@ -71,7 +71,19 @@ export default {
 
     const classes = computed(() => errors.value.length && props.showErrors ? errorClasses : nonErrorClasses);
 
-    watchEffect(() => emit('errors', errors.value));
+    watch(
+      () => errors.value,
+      (newVal) => emit('errors', newVal),
+      { immediate: true }
+    );
+
+    watch(
+      () => props.value,
+      (newVal) => {
+        if (newVal !== input.value) input.value = newVal;
+      },
+      { immediate: true }
+    );
 
     return {
       input,

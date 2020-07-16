@@ -12,7 +12,8 @@ config :stash, :router,
 
 config :stash,
   ecto_repos: [Stash.Repo],
-  event_stores: [Stash.EventStore]
+  event_stores: [Stash.EventStore],
+  tmdb_token: {:system, "TMDB_TOKEN"}
 
 config :commanded_ecto_projections, repo: Stash.Repo
 

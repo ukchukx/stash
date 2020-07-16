@@ -28,6 +28,9 @@ defmodule Stash.Web.Router do
     post "/signin", SessionController, :create_session
     get "/signout", SessionController, :delete_session
 
+    post "/movies", PageController, :create_movie
+    post "/books", PageController, :create_book
+
     get "/*path", PageController, :catch_all
   end
 

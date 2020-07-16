@@ -34,6 +34,7 @@ defmodule Stash.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:atomize_keys, "~> 1.1"},
       {:confex, "~> 3.4.0"},
       {:bcrypt_elixir, "~> 2.2"},
       {:commanded, "~> 1.1"},
