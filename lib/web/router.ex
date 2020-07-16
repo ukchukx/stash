@@ -29,7 +29,10 @@ defmodule Stash.Web.Router do
     get "/signout", SessionController, :delete_session
 
     post "/movies", PageController, :create_movie
+    delete "/movies/:id", PageController, :delete_movie
+
     post "/books", PageController, :create_book
+    delete "/books/:id", PageController, :delete_book
 
     get "/*path", PageController, :catch_all
   end

@@ -47,5 +47,35 @@ defmodule Stash.Web.PageController do
     end
   end
 
+  def delete_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => id}) do
+    with :ok <- Stash.Movies.delete_movie(%{id: id}) do
+      conn
+      |> put_resp_header("content-type", "application/json")
+      |> send_resp(204, "")
+    else
+      {:error, err} ->
+        Logger.error("Error while deleting movie #{inspect(err)}")
+
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{error: "Could not delete movie"})
+    end
+  end
+
+  def delete_book(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => id}) do
+    with :ok <- Stash.Books.delete_book(%{id: id}) do
+      conn
+      |> put_resp_header("content-type", "application/json")
+      |> send_resp(204, "")
+    else
+      {:error, err} ->
+        Logger.error("Error while deleting book #{inspect(err)}")
+
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{error: "Could not delete book"})
+    end
+  end
+
   def catch_all(conn, _), do: redirect(conn, to: Routes.page_path(conn, :index))
 end

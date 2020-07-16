@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 import { computed, ref } from '@vue/composition-api';
 import eventBus from '@/eventBus';
 
@@ -42,7 +43,12 @@ export default {
     const hasThumbnail = ref(props.movie.thumbnail && !!props.movie.thumbnail.length);
 
     const deleteMovie = () => {
-      if (confirm('Sure?')) eventBus.$emit('movie-deleted', props.movie.id);
+      if (!confirm('Sure?')) return;
+
+      axios.delete(`/movies/${props.movie.id}`)
+        .then(() => {
+          eventBus.$emit('movie-deleted', props.movie.id);
+        });
     };
 
     return {

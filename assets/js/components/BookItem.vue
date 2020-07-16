@@ -30,6 +30,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 import { computed, ref } from '@vue/composition-api';
 import eventBus from '@/eventBus';
 
@@ -46,7 +47,12 @@ export default {
     const hasThumbnail = ref(props.book.thumbnail && !!props.book.thumbnail.length);
 
     const deleteBook = () => {
-      if (confirm('Sure?')) eventBus.$emit('book-deleted', props.book.id);
+      if (!confirm('Sure?')) return;
+
+      axios.delete(`/books/${props.book.id}`)
+        .then(() => {
+          eventBus.$emit('book-deleted', props.book.id);
+        });
     };
 
     return {
