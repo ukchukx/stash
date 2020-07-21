@@ -18,7 +18,5 @@ defmodule Stash.DataCase do
 
   setup do
     Stash.Storage.reset!()
-
-    :ok
   end
 end
