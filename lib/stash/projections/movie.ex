@@ -5,6 +5,7 @@ defmodule Stash.Projections.Movie do
   @primary_key {:id, :binary_id, autogenerate: false}
   @fields [
     :id,
+    :user_id,
     :title,
     :imdb_id,
     :tags,
