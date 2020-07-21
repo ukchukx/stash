@@ -68,7 +68,7 @@ defmodule Stash.Aggregates.Book do
   end
 
   def apply(%__MODULE__{} = book, %BookDeleted{}) do
-    %__MODULE__{book | deleted: false}
+    %__MODULE__{book | deleted: true}
   end
 
 

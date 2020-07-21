@@ -61,7 +61,7 @@ defmodule Stash.Aggregates.Movie do
   end
 
   def apply(%__MODULE__{} = movie, %MovieDeleted{}) do
-    %__MODULE__{movie | deleted: false}
+    %__MODULE__{movie | deleted: true}
   end
 
 
