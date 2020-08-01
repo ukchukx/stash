@@ -17,7 +17,7 @@
       <div 
         v-show="hasMovieOptions && !state.movieSelected"
         @click="movieSelected(i)"
-        :key="i" v-for="(movie, i) in movieOptions" 
+        :key="i + 100" v-for="(movie, i) in movieOptions" 
         class="flex-grow flex px-4 py-2 items-center border-b">
         <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
           <img :src="movie.thumbnail" width="50" height="50">
@@ -33,7 +33,7 @@
       <div 
         v-show="hasTvOptions && !state.movieSelected"
         @click="tvSelected(i)"
-        :key="i" v-for="(movie, i) in tvOptions" 
+        :key="i + 1" v-for="(movie, i) in tvOptions" 
         class="flex-grow flex px-4 py-2 items-center border-b">
         <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
           <img :src="movie.thumbnail" width="50" height="50">
@@ -115,7 +115,11 @@ export default {
     const getMovieOptions = (str) => axios
       .get(searchUrl(str, 'movie'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, title }) => ({ thumbnail: `${imgPrefix}${poster_path}`, id, title, tv: false })))
+        .map(({ poster_path, id, title }) => {
+          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : 'https://via.placeholder.com/200';
+
+          return { thumbnail, id, title, tv: false };
+        }))
       .catch((response) => ([]));
     
     const getTvOptions = (str) => axios
@@ -129,6 +133,7 @@ export default {
       const title = state.form.title.trim();
       
       timeout = setTimeout(() => {
+        state.options = [];
         state.searching = true;
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
