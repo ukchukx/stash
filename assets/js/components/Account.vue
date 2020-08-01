@@ -2,6 +2,7 @@
   <!-- eslint-disable -->
   <div class="text-center px-6 py-4">
     <div class="py-8">
+      <h5 class="py-8">{{ user.email }}</h5>
       <div>
         <a 
           href="/signout"
@@ -14,6 +15,12 @@
 </template>
 <script>
 export default {
-  name: 'Account'
+  name: 'Account',
+  props: {
+    user: {
+      type: Object,
+      required: true
+    }
+  }
 };
 </script>
