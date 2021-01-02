@@ -28,6 +28,7 @@ defmodule Stash.Application do
     opts = [strategy: :one_for_one, name: Stash.Supervisor]
     case Supervisor.start_link(children, opts) do
       {:ok, _} = res ->
+        Stash.Support.SetupDatabase.run()
         Stash.TelemetryReporter.setup()
         res
       err_res -> err_res
