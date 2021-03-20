@@ -5,33 +5,54 @@ defmodule Stash.Projectors.Movie do
     consistency: :strong
 
   alias Stash.Events.{
+    MovieCreated,
     MovieDeleted,
-    MovieTagsChanged,
-    MovieCreated
+    MovieTagsChanged
   }
-  alias Stash.Projections.Movie
+
+  alias Stash.Movies
+  alias Stash.Projections.{Movie, UserMovie}
   alias Stash.Queries.ById
-  alias Stash.Support.Utils
+  alias Stash.Core.Utils
 
-  project %MovieCreated{movie_id: id} = event, fn multi ->
-    changes =
-      event
-      |> Utils.to_map
-      |> Map.drop([:movie_id])
-      |> Map.put(:id, id)
+  project(%MovieCreated{movie_id: id, imdb_id: imdb_id} = event, fn multi ->
+    user_movie_changes = %UserMovie{
+      id: id,
+      user_id: event.user_id,
+      list_id: event.list_id,
+      tags: event.tags,
+      title: event.title,
+      imdb_id: event.imdb_id,
+      thumbnail: event.thumbnail
+    }
 
-    Ecto.Multi.insert(multi, :movie, struct(Movie, changes))
-  end
+    case Movies.movie_by_imdb_id(imdb_id) do
+      {:ok, _movie} ->
+        Ecto.Multi.insert(multi, :user_movie, user_movie_changes)
 
-  project %MovieTagsChanged{movie_id: id, tags: tags}, fn multi ->
+      {:error, _} ->
+        movie_changes = %Movie{
+          id: Utils.new_id(),
+          title: event.title,
+          imdb_id: event.imdb_id,
+          thumbnail: event.thumbnail
+        }
+
+        multi
+        |> Ecto.Multi.insert(:user_movie, user_movie_changes)
+        |> Ecto.Multi.insert(:movie, movie_changes)
+    end
+  end)
+
+  project(%MovieTagsChanged{movie_id: id, tags: tags}, fn multi ->
     update_movie(multi, id, tags: tags)
-  end
+  end)
 
-  project %MovieDeleted{movie_id: id}, fn multi ->
-    Ecto.Multi.delete_all(multi, :movie, ById.one(Movie, id))
-  end
+  project(%MovieDeleted{movie_id: id}, fn multi ->
+    Ecto.Multi.delete_all(multi, :movie, ById.one(UserMovie, id))
+  end)
 
   defp update_movie(multi, id, changes) do
-    Ecto.Multi.update_all(multi, :movie, ById.one(Movie, id), set: changes)
+    Ecto.Multi.update_all(multi, :movie, ById.one(UserMovie, id), set: changes)
   end
 end

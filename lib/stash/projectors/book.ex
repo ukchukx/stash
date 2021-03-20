@@ -10,33 +10,55 @@ defmodule Stash.Projectors.Book do
     BookTagsChanged,
     BookCreated
   }
-  alias Stash.Projections.Book
+
+  alias Stash.Books
+  alias Stash.Projections.{Book, UserBook}
   alias Stash.Queries.ById
-  alias Stash.Support.Utils
+  alias Stash.Core.Utils
 
-  project %BookCreated{book_id: id} = event, fn multi ->
-    changes =
-      event
-      |> Utils.to_map
-      |> Map.drop([:book_id])
-      |> Map.put(:id, id)
+  project(%BookCreated{book_id: id, isbn: isbn} = event, fn multi ->
+    user_book_struct = %UserBook{
+      id: id,
+      user_id: event.user_id,
+      list_id: event.list_id,
+      tags: event.tags,
+      notes: event.notes,
+      title: event.title,
+      isbn: event.isbn,
+      thumbnail: event.thumbnail
+    }
 
-    Ecto.Multi.insert(multi, :book, struct(Book, changes))
-  end
+    case Books.book_by_isbn(isbn) do
+      {:ok, _book} ->
+        Ecto.Multi.insert(multi, :user_book, user_book_struct)
 
-  project %BookTagsChanged{book_id: id, tags: tags}, fn multi ->
+      {:error, _} ->
+        book_struct = %Book{
+          id: Utils.new_id(),
+          title: event.title,
+          isbn: event.isbn,
+          thumbnail: event.thumbnail
+        }
+
+        multi
+        |> Ecto.Multi.insert(:book, book_struct)
+        |> Ecto.Multi.insert(:user_book, user_book_struct)
+    end
+  end)
+
+  project(%BookTagsChanged{book_id: id, tags: tags}, fn multi ->
     update_book(multi, id, tags: tags)
-  end
+  end)
 
-  project %BookNotesChanged{book_id: id, notes: notes}, fn multi ->
+  project(%BookNotesChanged{book_id: id, notes: notes}, fn multi ->
     update_book(multi, id, notes: notes)
-  end
+  end)
 
-  project %BookDeleted{book_id: id}, fn multi ->
-    Ecto.Multi.delete_all(multi, :book, ById.one(Book, id))
-  end
+  project(%BookDeleted{book_id: id}, fn multi ->
+    Ecto.Multi.delete_all(multi, :book, ById.one(UserBook, id))
+  end)
 
   defp update_book(multi, id, changes) do
-    Ecto.Multi.update_all(multi, :book, ById.one(Book, id), set: changes)
+    Ecto.Multi.update_all(multi, :book, ById.one(UserBook, id), set: changes)
   end
 end

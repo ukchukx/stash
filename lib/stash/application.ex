@@ -26,12 +26,14 @@ defmodule Stash.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Stash.Supervisor]
+
     case Supervisor.start_link(children, opts) do
       {:ok, _} = res ->
         Stash.Support.SetupDatabase.run()
-        Stash.TelemetryReporter.setup()
         res
-      err_res -> err_res
+
+      err_res ->
+        err_res
     end
   end
 

@@ -10,14 +10,22 @@ defmodule Stash.Web.PageController do
     movies = Movies.movies_for_user(user_id)
     tmdb_token = Application.get_env(:stash, :tmdb_token)
 
-    render conn, "index.html", user: user, books: books, movies: movies, page_title: "Home", tmdb_token: tmdb_token
+    render(conn, "index.html",
+      user: user,
+      books: books,
+      movies: movies,
+      page_title: "Home",
+      tmdb_token: tmdb_token
+    )
   end
 
   def index(conn, _), do: redirect(conn, to: Routes.session_path(conn, :signin))
 
   def create_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, params) do
     context = %{user: %{id: user_id}}
-    with {:ok, movie} <- params |> AtomizeKeys.atomize_string_keys |> Stash.Movies.create_movie(context) do
+
+    with {:ok, movie} <-
+           params |> AtomizeKeys.atomize_string_keys() |> Stash.Movies.create_movie(context) do
       conn
       |> Plug.Conn.put_status(201)
       |> json(%{data: movie})
@@ -33,7 +41,9 @@ defmodule Stash.Web.PageController do
 
   def create_book(%{assigns: %{current_user: %{"id" => user_id}}} = conn, params) do
     context = %{user: %{id: user_id}}
-    with {:ok, book} <- params |> AtomizeKeys.atomize_string_keys |> Stash.Books.create_book(context) do
+
+    with {:ok, book} <-
+           params |> AtomizeKeys.atomize_string_keys() |> Stash.Books.create_book(context) do
       conn
       |> Plug.Conn.put_status(201)
       |> json(%{data: book})
@@ -47,7 +57,7 @@ defmodule Stash.Web.PageController do
     end
   end
 
-  def delete_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => id}) do
+  def delete_movie(%{assigns: %{current_user: %{"id" => _user_id}}} = conn, %{"id" => id}) do
     with :ok <- Stash.Movies.delete_movie(%{id: id}) do
       conn
       |> put_resp_header("content-type", "application/json")
@@ -62,7 +72,7 @@ defmodule Stash.Web.PageController do
     end
   end
 
-  def delete_book(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => id}) do
+  def delete_book(%{assigns: %{current_user: %{"id" => _user_id}}} = conn, %{"id" => id}) do
     with :ok <- Stash.Books.delete_book(%{id: id}) do
       conn
       |> put_resp_header("content-type", "application/json")

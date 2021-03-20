@@ -9,7 +9,7 @@ defmodule Stash.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      build_embedded: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
@@ -41,6 +41,7 @@ defmodule Stash.MixProject do
       {:commanded_eventstore_adapter, "~> 1.0.0"},
       {:commanded_ecto_projections, "~> 1.0"},
       {:cors_plug, "~> 1.4"},
+      {:elixir_uuid, "~> 1.2"},
       {:ex_machina, "~> 2.3", only: :test},
       {:eventstore, "~> 1.0.0"},
       {:ecto_sql, "~> 3.4"},
@@ -75,7 +76,13 @@ defmodule Stash.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "store.init": ["ecto.create", "store.reset", "ecto.migrate"],
-      test: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate --quiet", "store.reset", "test"]
+      test: [
+        "ecto.drop --quiet",
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "store.reset",
+        "test"
+      ]
     ]
   end
 end

@@ -1,6 +1,6 @@
 defmodule Stash.MovieTest do
   alias Stash.{Movies, DataCase}
-  alias Stash.Projections.Movie
+  alias Stash.Projections.UserMovie, as: Movie
 
   use DataCase
 
@@ -9,15 +9,15 @@ defmodule Stash.MovieTest do
 
   describe "a movie" do
     test "can be created" do
-      assert {:ok, %Movie{id: movie_id}} = fixture(:movie)
-      assert {:ok, _} = Movies.movie_by_id(movie_id)
+      user = %{lists: [list]} = create_user_having_a_list("movie")
+      assert {:ok, %Movie{id: movie_id}} = create_movie(user, list_id: list["id"])
+      assert {:ok, %Movie{}} = Movies.movie_by_id(movie_id)
     end
 
     test "can be updated" do
-      assert {:ok, %Movie{id: movie_id} = movie} = fixture(:movie)
-
+      user = %{lists: [list]} = create_user_having_a_list("movie")
+      {:ok, %Movie{} = movie} = create_movie(user, list_id: list["id"])
       params = build_movie_params() |> Map.take([:tags])
-
       assert {:ok, %Movie{} = updated_movie} = Movies.update_movie(movie, params)
 
       # Unchanged
@@ -30,9 +30,10 @@ defmodule Stash.MovieTest do
     end
 
     test "can be deleted" do
-      assert {:ok, %Movie{id: movie_id} = movie} = fixture(:movie)
+      user = %{lists: [list], id: user_id} = create_user_having_a_list("movie")
+      {:ok, %Movie{} = movie} = create_movie(user, list_id: list["id"])
       assert :ok = Movies.delete_movie(movie)
-      assert {:error, :not_found} = Movies.movie_by_id(movie_id)
+      assert {:error, :not_found} = Movies.movie_by_user_and_id(user_id, movie.id)
     end
   end
 end

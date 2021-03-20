@@ -5,8 +5,11 @@ defmodule Stash.Web.Support.Auth do
     case Stash.Accounts.user_by_email(email) do
       {:ok, %{active: true} = user} ->
         cond do
-          Stash.Support.Auth.validate_password(pass, user.password) -> {:ok, set_session(conn, user)}
-          user -> {:error, :unauthorized, conn}
+          Stash.Support.Auth.validate_password(pass, user.password) ->
+            {:ok, set_session(conn, user)}
+
+          user ->
+            {:error, :unauthorized, conn}
         end
 
       _ ->

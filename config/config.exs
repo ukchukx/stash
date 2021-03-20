@@ -7,8 +7,7 @@
 # General application configuration
 use Mix.Config
 
-config :stash, :router,
-  timeout: 10_000
+config :stash, :router, timeout: 10_000
 
 config :stash,
   ecto_repos: [Stash.Repo],
@@ -44,17 +43,17 @@ config :logger,
   utc_log: true,
   truncate: :infinity
 
-pool_size = "STASH_DB_POOL_SIZE" |> System.get_env |> String.to_integer
+pool_size = "STASH_DB_POOL_SIZE" |> System.get_env() |> String.to_integer()
 
 config :stash, Stash.Repo,
   truncate_read_tables_query: """
-    TRUNCATE TABLE
-      users,
-      books,
-      movies,
-      projection_versions
-    RESTART IDENTITY;
-    """,
+  TRUNCATE TABLE
+    users,
+    books,
+    movies,
+    projection_versions
+  RESTART IDENTITY;
+  """,
   migration_timestamps: [type: :utc_datetime_usec],
   username: {:system, "STASH_DB_USER"},
   password: {:system, "STASH_DB_PASS"},
