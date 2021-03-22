@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable -->
   <div class="flex justify-between px-6">
-    <NewListForm list-type="movie" />
+    <NewListForm :list-type="listType" />
   </div>
 
   <List v-for="(list, i) in lists" :key="i" :list="list" />

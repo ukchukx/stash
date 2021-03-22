@@ -25,6 +25,10 @@ const getters = {
   booksForList: ({ books }) => (id) => books.filter(({ list_id }) => list_id === id)
 }
 
+const deleteResource = (resource, id) => axios.delete(`/api/${resource}/${id}`, { ...commonRequestOptions() });
+const getResourceByList = (resource, id) => axios.get(`/api/${resource}/${id}`, { ...commonRequestOptions() });
+const createResource = (resource, data) => axios.post(`/api/${resource}`, data, { ...commonRequestOptions() });
+
 // actions
 const actions = {
   fetchLists ({ commit }) {
@@ -35,56 +39,56 @@ const actions = {
       });
   },
   createList ({ commit }, data) {
-    return axios.post('/api/lists', data, { ...commonRequestOptions() })
+    return createResource('lists', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'lists', data });
         return data;
       });
   },
   deleteList ({ commit }, id) {
-    return axios.delete(`/api/lists/${id}`, { ...commonRequestOptions() })
+    return deleteResource('lists', id)
       .then(() => {
         commit('removeList', id);
         return true;
       });
   },
   fetchMovies ({ commit }, id) {
-    return axios.get(`/api/movies/${id}`, { ...commonRequestOptions() })
+    return getResourceByList('movies', id)
       .then(({ data: { data } }) => {
         commit('set', { key: 'movies', data });
         return data;
       });
   },
   createMovie ({ commit }, data) {
-    return axios.post('/api/movies', data, { ...commonRequestOptions() })
+    return createResource('movies', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'movies', data });
         return data;
       });
   },
   deleteMovie ({ commit }, id) {
-    return axios.delete(`/api/movies/${id}`, { ...commonRequestOptions() })
+    return deleteResource('movies', id)
       .then(() => {
         commit('remove', { key: 'movies', id });
         return true;
       });
   },
   fetchBooks ({ commit }, id) {
-    return axios.get(`/api/books/${id}`, { ...commonRequestOptions() })
+    return getResourceByList('books', id)
       .then(({ data: { data } }) => {
         commit('set', { key: 'books', data });
         return data;
       });
   },
   createBook ({ commit }, data) {
-    return axios.post('/api/books', data, { ...commonRequestOptions() })
+    return createResource('books', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'books', data });
         return data;
       });
   },
   deleteBook ({ commit }, id) {
-    return axios.delete(`/api/books/${id}`, { ...commonRequestOptions() })
+    return deleteResource('books', id)
       .then(() => {
         commit('remove', { key: 'books', id });
         return true;

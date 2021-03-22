@@ -50,17 +50,13 @@ export default {
     const closeAddMovieView = () => {
       state.view = 'list';
     };
-    const movieAdded = (movie) => {
-      state.movies.push(movie);
-    };
 
     onBeforeMount(() => store.dispatch('fetchMovies', state.listId));
     
     return {
       state,
       showAddMovieView,
-      closeAddMovieView,
-      movieAdded
+      closeAddMovieView
     };
   }
 };

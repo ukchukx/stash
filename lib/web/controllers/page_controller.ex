@@ -29,7 +29,7 @@ defmodule Stash.Web.PageController do
   end
 
   def books_in_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => list_id}) do
-    books = Movies.books_by_user_and_list(user_id, list_id)
+    books = Books.books_by_user_and_list(user_id, list_id)
     json(conn, %{data: books})
   end
 

@@ -29,16 +29,16 @@ export default {
     }
   },
   setup(props) {
+    const showMovie = ({ title, tags }, text) => {
+      if (!text) return true;
+      return title.toLowerCase().includes(text) || tags.some((t) => t.includes(text));
+    };
     const state = reactive({
       searchText: ''
     });
-    const showMovie = ({ title, tags }, searchText) => {
-      if (!searchText) return true;
-      return title.toLowerCase().includes(searchText) || tags.some((t) => t.includes(searchText));
-    };
     state.filteredMovies = computed(() => {
-      const search = state.searchText.trim().toLowerCase();
-      return props.movies.filter((movie) => showMovie(movie, search));
+      const text = state.searchText.trim().toLowerCase();
+      return props.movies.filter((movie) => showMovie(movie, text));
     });
     state.isEmpty = computed(() => !state.filteredMovies.length);
 

@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import Account from '../components/Account.vue';
 import MovieLists from '../components/MovieLists.vue';
+import BookLists from '../components/BookLists.vue';
 import Books from '../components/Books.vue';
 import Movies from '../components/Movies.vue';
 import Signin from '../components/Signin.vue';
@@ -15,7 +16,7 @@ const routes = [
   {
     path: '/bl',
     name: 'BookLists',
-    component: Books
+    component: BookLists
   },
   {
     path: '/movies',

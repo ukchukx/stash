@@ -30,7 +30,8 @@ export default {
   setup(props) {
     const router = useRouter();
     const store = useStore();
-    const listHref = router.resolve({ name: 'Movies', query: { id: props.list.id } }).href;
+    const name = props.list.type === 'movie' ? 'Movies' : 'Books';
+    const listHref = router.resolve({ name, query: { id: props.list.id } }).href;
 
     const deleteList = () => {
       if (!confirm('Sure?')) return;
