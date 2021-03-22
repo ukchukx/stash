@@ -4,7 +4,8 @@
     <label class="block text-gray-700 text-sm font-bold mb-2">
       {{ label }}
     </label>
-    <input 
+    <input
+      @keyup.enter="enterPressed"
       v-model="input"
       :name="name"
       :class="classes" 
@@ -57,13 +58,14 @@ export default {
       default: () => true
     }
   },
-  emits: ['update:modelValue', 'errors'],
+  emits: ['update:modelValue', 'errors', 'enter-pressed'],
   setup(props, { emit }) {
     const { input, errors } = useInputValidator(
       props.value, 
       props.validators, 
       (value) => emit('update:modelValue', value)
     );
+    const enterPressed = () => emit('enter-pressed');
     
     let defaultClasses = `shadow appearance-none border rounded py-2 px-3 text-gray-700 ${props.extraInputClasses}`;
     defaultClasses = `${defaultClasses} focus:outline-none leading-tight`;
@@ -89,7 +91,8 @@ export default {
     return {
       input,
       errors,
-      classes
+      classes,
+      enterPressed
     };
   }
 };

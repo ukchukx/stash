@@ -20,6 +20,7 @@ const getters = {
   bookLists: ({ lists }) => lists.filter(({ type }) => type === 'book'),
   movies: ({ movies }) => movies,
   books: ({ books }) => books,
+  list: ({ lists }) => (id) => lists.find((list) => list.id === id),
   moviesForList: ({ movies }) => (id) => movies.filter(({ list_id }) => list_id === id),
   booksForList: ({ books }) => (id) => books.filter(({ list_id }) => list_id === id)
 }
@@ -27,33 +28,72 @@ const getters = {
 // actions
 const actions = {
   fetchLists ({ commit }) {
-    return axios.get('/api/lists',  { ...commonRequestOptions() })
+    return axios.get('/api/lists', { ...commonRequestOptions() })
       .then(({ data: { data } }) => {
         commit('set', { key: 'lists', data });
         return data;
       });
   },
   createList ({ commit }, data) {
-    return axios.post('/api/lists', data,  { ...commonRequestOptions() })
+    return axios.post('/api/lists', data, { ...commonRequestOptions() })
       .then(({ data: { data } }) => {
         commit('add', { key: 'lists', data });
         return data;
       });
   },
-  deleteList ({ commit }, listId) {
-    return axios.delete(`/api/lists/${listId}`,  { ...commonRequestOptions() })
+  deleteList ({ commit }, id) {
+    return axios.delete(`/api/lists/${id}`, { ...commonRequestOptions() })
       .then(() => {
-        commit('removeList', listId);
+        commit('removeList', id);
+        return true;
+      });
+  },
+  fetchMovies ({ commit }, id) {
+    return axios.get(`/api/movies/${id}`, { ...commonRequestOptions() })
+      .then(({ data: { data } }) => {
+        commit('set', { key: 'movies', data });
+        return data;
+      });
+  },
+  createMovie ({ commit }, data) {
+    return axios.post('/api/movies', data, { ...commonRequestOptions() })
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'movies', data });
+        return data;
+      });
+  },
+  deleteMovie ({ commit }, id) {
+    return axios.delete(`/api/movies/${id}`, { ...commonRequestOptions() })
+      .then(() => {
+        commit('remove', { key: 'movies', id });
+        return true;
+      });
+  },
+  fetchBooks ({ commit }, id) {
+    return axios.get(`/api/books/${id}`, { ...commonRequestOptions() })
+      .then(({ data: { data } }) => {
+        commit('set', { key: 'books', data });
+        return data;
+      });
+  },
+  createBook ({ commit }, data) {
+    return axios.post('/api/books', data, { ...commonRequestOptions() })
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'books', data });
+        return data;
+      });
+  },
+  deleteBook ({ commit }, id) {
+    return axios.delete(`/api/books/${id}`, { ...commonRequestOptions() })
+      .then(() => {
+        commit('remove', { key: 'books', id });
         return true;
       });
   }
 }
 
 const remove = (state, { key, id }) => {
-  const index = state[key].findIndex((item) => id === item.id);
-  if (index) {
-    state[key].splice(index, 1);
-  }
+  state[key] = state[key].filter((item) => id !== item.id);
 }
 
 // mutations

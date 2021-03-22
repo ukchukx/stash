@@ -1,5 +1,5 @@
 defmodule Stash.Commands.CreateMovie do
-  defstruct [:user_id, :movie_id, :list_id, :imdb_id, :title, :thumbnail, :tags]
+  defstruct [:user_id, :movie_id, :list_id, :imdb_id, :title, :thumbnail, tags: []]
 
   def assign_id(%__MODULE__{} = command, id), do: %__MODULE__{command | movie_id: id}
 end
@@ -76,7 +76,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateMovie do
     end
   end
 
-  defp validate_thumbnail(nil), do: [{:thumbnail, "is not a URI"}]
+  defp validate_thumbnail(nil), do: []
 
   defp validate_thumbnail(thumbnail) do
     case URIValidator.validate(thumbnail) do

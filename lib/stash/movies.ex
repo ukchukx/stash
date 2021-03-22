@@ -70,4 +70,8 @@ defmodule Stash.Movies do
   def movie_by_user_and_id(user_id, movie_id) do
     user_id |> Movies.by_user_and_id(movie_id) |> Queries.fetch_one()
   end
+
+  def movies_by_user_and_list(user_id, list_id) do
+    user_id |> Movies.by_user_and_list(list_id) |> Queries.fetch_all()
+  end
 end

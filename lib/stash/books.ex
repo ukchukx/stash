@@ -74,4 +74,8 @@ defmodule Stash.Books do
   def book_by_user_and_isbn(user_id, isbn) do
     user_id |> Books.by_user_and_isbn(isbn) |> Queries.fetch_one()
   end
+
+  def books_by_user_and_list(user_id, list_id) do
+    user_id |> Books.by_user_and_list(list_id) |> Queries.fetch_all()
+  end
 end

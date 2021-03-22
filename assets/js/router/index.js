@@ -1,26 +1,41 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import Account from '../components/Account.vue';
-import Books from '../components/Books.vue';
 import MovieLists from '../components/MovieLists.vue';
-import List from '../components/List.vue';
+import Books from '../components/Books.vue';
+import Movies from '../components/Movies.vue';
 import Signin from '../components/Signin.vue';
 import Signup from '../components/Signup.vue';
 
 const routes = [
   {
-    path: '/movies',
+    path: '/ml',
     name: 'MovieLists',
     component: MovieLists
   },
   {
-    path: '/books',
+    path: '/bl',
     name: 'BookLists',
     component: Books
   },
   {
-    path: '/list',
-    name: 'List',
-    component: List
+    path: '/movies',
+    name: 'Movies',
+    component: Movies
+  },
+  {
+    path: '/books',
+    name: 'Books',
+    component: Books
+  },
+  {
+    path: '/m',
+    name: 'Movie',
+    component: Movies // TODO: Change
+  },
+  {
+    path: '/b',
+    name: 'Book',
+    component: Books // TODO: Change
   },
   {
     path: '/account',

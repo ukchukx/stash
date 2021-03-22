@@ -25,32 +25,26 @@
   </div>
 </template>
 <script>
-import { useRouter } from 'vue-router';
-import { computed } from 'vue';
-
 export default {
   name: 'EmptyList',
   props: {
-    addItemRouteName: {
-      type: String,
-      default: () => ''
+    showButton: {
+      type: Boolean,
+      default: () => true
     },
     message: {
       type: String,
       default: () => 'You have no items'
     }
   },
-  setup(props) {
-    const router = useRouter();
-    const showButton = computed(() => !!props.addItemRouteName);
-
+  emits: ['add-item-clicked'],
+  setup(props, { emit }) {
     const addClicked = () => {
-      router.push({ name: props.addItemRouteName });
+      emit('add-item-clicked');
     };
 
     return {
-      addClicked,
-      showButton
+      addClicked
     };
   }
 };

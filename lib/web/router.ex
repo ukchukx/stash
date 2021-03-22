@@ -27,12 +27,12 @@ defmodule Stash.Web.Router do
     get "/lists", PageController, :lists
     post "/lists", PageController, :create_list
     delete "/lists/:id", PageController, :delete_list
+    get "/movies/:id", PageController, :movies_in_list
     post "/movies", PageController, :create_movie
     delete "/movies/:id", PageController, :delete_movie
+    get "/books/:id", PageController, :books_in_list
     post "/books", PageController, :create_book
     delete "/books/:id", PageController, :delete_book
-
-    get "/*path", PageController, :catch_all
   end
 
   scope "/", Stash.Web do

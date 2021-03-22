@@ -54,11 +54,13 @@ export default {
     defaultClasses = `md:hover:border-gray-600 ${defaultClasses} ${commonClasses}`;
     const activeClasses = `text-blue-600 border-blue-600 ${commonClasses}`;
     const moviesName = 'MovieLists';
+    const movieName = 'Movies';
+    const bookName = 'Books';
     const booksName = 'BookLists';
     const accountName = 'Account';
 
-    const moviesSelected = computed(() => route.name === moviesName);
-    const booksSelected = computed(() => route.name === booksName);
+    const moviesSelected = computed(() => [moviesName, movieName].includes(route.name));
+    const booksSelected = computed(() => [booksName, bookName].includes(route.name));
     const accountSelected = computed(() => route.name === accountName);
 
     const state = reactive({

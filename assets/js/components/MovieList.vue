@@ -4,19 +4,22 @@
     <div class="flex justify-between px-6">
       <div class="md:w-2/3 sm:w-0"></div>
       <div class="w-full md:w-1/3 flex items-center py-2">
-        <input v-model="searchText" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Search">
+        <input v-model="state.searchText" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Search">
       </div>
     </div>
-    <MovieItem v-for="(movieItem, i) in movies" :key="i" v-show="showMovie(movieItem)" :movie="movieItem" />
+    <MovieItem v-for="(movie, i) in state.filteredMovies" :key="i" :movie="movie" />
+    <EmptyList v-if="state.isEmpty" message="No movies" :show-button="false" />
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { computed, reactive } from 'vue';
 import MovieItem from './MovieItem.vue';
+import EmptyList from './EmptyList.vue';
 
 export default {
   name: 'MovieList',
   components: {
+    EmptyList,
     MovieItem
   },
   props: {
@@ -26,17 +29,21 @@ export default {
     }
   },
   setup(props) {
-    const searchText = ref('');
-
-    const showMovie = ({ title, tags }) => {
-      const search = searchText.value.trim().toLowerCase();
-      const tagSearchFn = (t) => t.includes(search);
-      return title.toLowerCase().includes(search) || tags.some(tagSearchFn);
+    const state = reactive({
+      searchText: ''
+    });
+    const showMovie = ({ title, tags }, searchText) => {
+      if (!searchText) return true;
+      return title.toLowerCase().includes(searchText) || tags.some((t) => t.includes(searchText));
     };
+    state.filteredMovies = computed(() => {
+      const search = state.searchText.trim().toLowerCase();
+      return props.movies.filter((movie) => showMovie(movie, search));
+    });
+    state.isEmpty = computed(() => !state.filteredMovies.length);
 
     return {
-      searchText,
-      showMovie
+      state
     };
   }
 };
