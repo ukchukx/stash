@@ -12,11 +12,11 @@
   </div>
 </template>
 <script>
-import { computed, reactive } from '@vue/composition-api';
-import EmptyList from '@/components/EmptyList';
-import BookList from '@/components/BookList';
-import AddBook from '@/components/AddBook';
-import eventBus from '@/eventBus';
+import { computed, reactive } from 'vue';
+import EmptyList from './EmptyList.vue';
+import BookList from './BookList.vue';
+import AddBook from './AddBook.vue';
+import eventBus from '../eventBus';
 
 export default {
   name: 'Books',

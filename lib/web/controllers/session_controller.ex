@@ -6,10 +6,7 @@ defmodule Stash.Web.SessionController do
   end
 
   def signin(conn, _) do
-    render(conn, "signin.html",
-      path: Routes.session_path(conn, :create_session),
-      page_title: "Sign in"
-    )
+    render(conn, "signin.html", page_title: "Sign in")
   end
 
   def signup(%{assigns: %{current_user: %{}}} = conn, _) do
@@ -17,33 +14,27 @@ defmodule Stash.Web.SessionController do
   end
 
   def signup(conn, _) do
-    render(conn, "signup.html",
-      path: Routes.session_path(conn, :create_account),
-      page_title: "Sign up"
-    )
+    render(conn, "signup.html", page_title: "Sign up")
   end
 
   def create_account(conn, %{"email" => email, "password" => pass}) do
     with {:ok, %{}} <- Stash.Accounts.create_user(%{email: email, password: pass}),
          {:ok, conn} <- Stash.Web.Support.Auth.auth_with_email_and_password(conn, email, pass) do
-      redirect(conn, to: Routes.page_path(conn, :index))
+      conn
+      |> put_status(201)
+      |> json(%{created: true})
     else
       _ ->
         conn
-        |> put_flash(:error, "Could not create account")
-        |> redirect(to: Routes.session_path(conn, :signin))
+        |> put_status(400)
+        |> json(%{created: false})
     end
   end
 
   def create_session(conn, %{"email" => email, "password" => pass}) do
     case Stash.Web.Support.Auth.auth_with_email_and_password(conn, email, pass) do
-      {:ok, conn} ->
-        redirect(conn, to: Routes.page_path(conn, :index))
-
-      {:error, _reason, conn} ->
-        conn
-        |> put_flash(:error, "Invalid email/password")
-        |> redirect(to: Routes.session_path(conn, :signin))
+      {:ok, conn} -> json(conn, %{authenticated: true})
+      {:error, _reason, conn} -> json(conn, %{authenticated: false})
     end
   end
 

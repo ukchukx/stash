@@ -1,7 +1,5 @@
-<div id="app">
- <stash
-  :books="<%= Jason.encode!(@books) %>"
-  :movies="<%= Jason.encode!(@movies) %>"
-  :user="<%= Jason.encode!(@user) %>"
-  :tmdb-token="'<%= @tmdb_token %>'" />
+<div
+  id="app"
+  data-user="<%= Jason.encode!(@user) %>"
+  data-tmdb-token="<%= @tmdb_token %>">
 </div>

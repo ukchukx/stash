@@ -3,23 +3,45 @@ defmodule Stash.Web.PageController do
 
   require Logger
 
-  alias Stash.{Books, Movies}
+  alias Stash.{Accounts, Books, Movies}
 
   def index(%{assigns: %{current_user: %{"id" => user_id} = user}} = conn, _) do
-    books = Books.books_for_user(user_id)
-    movies = Movies.movies_for_user(user_id)
+    {:ok, user} = Accounts.user_by_id(user_id)
     tmdb_token = Application.get_env(:stash, :tmdb_token)
 
     render(conn, "index.html",
       user: user,
-      books: books,
-      movies: movies,
       page_title: "Home",
       tmdb_token: tmdb_token
     )
   end
 
   def index(conn, _), do: redirect(conn, to: Routes.session_path(conn, :signin))
+
+  def lists(%{assigns: %{current_user: %{"id" => user_id}}} = conn, _) do
+    {:ok, %{lists: lists}} = Accounts.user_by_id(user_id)
+    json(conn, %{data: lists})
+  end
+
+  def create_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{} = params) do
+    {:ok, %{lists: lists}} = Accounts.user_by_id(user_id)
+    existing_list_ids = Enum.map(lists, & &1["id"])
+    attrs = %{name: params["name"], type: params["type"]}
+
+    {:ok, %{lists: lists}} = Accounts.create_list(attrs, %{user: %{id: user_id}})
+    new_list = Enum.find(lists, & &1["id"] not in existing_list_ids)
+
+    conn
+    |> put_status(201)
+    |> json(%{data: new_list})
+  end
+
+  def delete_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => list_id}) do
+    :ok = Accounts.delete_list(%{id: user_id}, list_id)
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(204, "")
+  end
 
   def create_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, params) do
     context = %{user: %{id: user_id}}
@@ -58,7 +80,7 @@ defmodule Stash.Web.PageController do
   end
 
   def delete_movie(%{assigns: %{current_user: %{"id" => _user_id}}} = conn, %{"id" => id}) do
-    with :ok <- Stash.Movies.delete_movie(%{id: id}) do
+    with :ok <- Movies.delete_movie(%{id: id}) do
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(204, "")
@@ -73,7 +95,7 @@ defmodule Stash.Web.PageController do
   end
 
   def delete_book(%{assigns: %{current_user: %{"id" => _user_id}}} = conn, %{"id" => id}) do
-    with :ok <- Stash.Books.delete_book(%{id: id}) do
+    with :ok <- Books.delete_book(%{id: id}) do
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(204, "")
@@ -87,5 +109,5 @@ defmodule Stash.Web.PageController do
     end
   end
 
-  def catch_all(conn, _), do: redirect(conn, to: Routes.page_path(conn, :index))
+  def catch_all(conn, params), do: index(conn, params)
 end

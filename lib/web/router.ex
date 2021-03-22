@@ -13,6 +13,26 @@ defmodule Stash.Web.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug Stash.Web.Plugs.LoadCurrentUser
+  end
+
+  scope "/api", Stash.Web do
+    pipe_through :api
+
+    post "/signup", SessionController, :create_account
+    post "/signin", SessionController, :create_session
+    get "/lists", PageController, :lists
+    post "/lists", PageController, :create_list
+    delete "/lists/:id", PageController, :delete_list
+    post "/movies", PageController, :create_movie
+    delete "/movies/:id", PageController, :delete_movie
+    post "/books", PageController, :create_book
+    delete "/books/:id", PageController, :delete_book
+
+    get "/*path", PageController, :catch_all
   end
 
   scope "/", Stash.Web do
@@ -23,16 +43,8 @@ defmodule Stash.Web.Router do
     get "/", PageController, :index
 
     get "/signup", SessionController, :signup
-    post "/signup", SessionController, :create_account
     get "/signin", SessionController, :signin
-    post "/signin", SessionController, :create_session
     get "/signout", SessionController, :delete_session
-
-    post "/movies", PageController, :create_movie
-    delete "/movies/:id", PageController, :delete_movie
-
-    post "/books", PageController, :create_book
-    delete "/books/:id", PageController, :delete_book
 
     get "/*path", PageController, :catch_all
   end

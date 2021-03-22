@@ -11,8 +11,8 @@
   </div>
 </template>
 <script>
-import { ref } from '@vue/composition-api';
-import BookItem from '@/components/BookItem';
+import { ref } from 'vue';
+import BookItem from './BookItem.vue';
 
 export default {
   name: 'BookList',

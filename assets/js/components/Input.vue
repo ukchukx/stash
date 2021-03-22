@@ -14,9 +14,9 @@
   </div>
 </template>
 <script>
-import { computed, watch } from '@vue/composition-api';
-import useInputValidator from '@/features/useInputValidator';
-import InputErrors from '@/components/InputErrors';
+import { computed, watch } from 'vue';
+import useInputValidator from '../features/useInputValidator';
+import InputErrors from './InputErrors.vue';
 
 export default {
   name: 'Input',
@@ -44,7 +44,7 @@ export default {
       type: Array,
       default: () => []
     },
-    value: {
+    modelValue: {
       type: String,
       default: () => ''
     },
@@ -57,11 +57,12 @@ export default {
       default: () => true
     }
   },
+  emits: ['update:modelValue', 'errors'],
   setup(props, { emit }) {
     const { input, errors } = useInputValidator(
       props.value, 
       props.validators, 
-      (value) => emit('input', value)
+      (value) => emit('update:modelValue', value)
     );
     
     let defaultClasses = `shadow appearance-none border rounded py-2 px-3 text-gray-700 ${props.extraInputClasses}`;

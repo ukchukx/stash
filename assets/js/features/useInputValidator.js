@@ -1,4 +1,4 @@
-import { ref, watch } from '@vue/composition-api';
+import { ref, watch } from 'vue';
 
 export default function (startVal, validators, onValidate) { // eslint-disable-line func-names
   const input = ref(startVal);

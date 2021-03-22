@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
     <%= live_title_tag assigns[:page_title] || "Home", suffix: " · Stash" %>
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/app.css") %>"/>
   </head>
   <body>
     <%= @inner_content %>
 
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/manifest.js") %>'></script>
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/vendor.js") %>'></script>
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
+    <script type="module" type="text/javascript" src='<%= Routes.static_path(@conn, "/app.js") %>'></script>
   </body>
 </html>

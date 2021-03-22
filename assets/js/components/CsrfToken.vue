@@ -3,7 +3,7 @@
   <input type="hidden" name="_csrf_token" :value="csrfToken">
 </template>
 <script>
-import { onMounted, ref } from '@vue/composition-api';
+import { onMounted, ref } from 'vue';
 
 export default {
   name: 'CsrfToken',

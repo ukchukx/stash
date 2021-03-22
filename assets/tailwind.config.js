@@ -1,7 +1,11 @@
 module.exports = {
+  purge: ['js/**.vue'],
+  darkMode: 'media',
   theme: {
     extend: {},
   },
-  variants: {},
+  variants: {
+    extend: {}
+  },
   plugins: [],
 }

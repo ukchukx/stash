@@ -26,9 +26,9 @@
   </div>
 </template>
 <script>
+import { computed, ref } from 'vue';
 import axios from 'axios';
-import { computed, ref } from '@vue/composition-api';
-import eventBus from '@/eventBus';
+import eventBus from '../eventBus';
 
 export default {
   name: 'MovieItem',

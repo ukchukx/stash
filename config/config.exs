@@ -43,8 +43,6 @@ config :logger,
   utc_log: true,
   truncate: :infinity
 
-pool_size = "STASH_DB_POOL_SIZE" |> System.get_env() |> String.to_integer()
-
 config :stash, Stash.Repo,
   truncate_read_tables_query: """
   TRUNCATE TABLE
@@ -59,7 +57,7 @@ config :stash, Stash.Repo,
   password: {:system, "STASH_DB_PASS"},
   database: {:system, "STASH_READ_DB"},
   hostname: {:system, "STASH_DB_HOST"},
-  pool_size: pool_size,
+  pool_size: {:system, :integer, "STASH_DB_POOL_SIZE"},
   charset: "utf8mb4",
   collation: "utf8mb4_unicode_ci"
 
@@ -69,7 +67,7 @@ config :stash, Stash.EventStore,
   password: {:system, "STASH_DB_PASS"},
   database: {:system, "STASH_EVENT_DB"},
   hostname: {:system, "STASH_DB_HOST"},
-  pool_size: pool_size,
+  pool_size: {:system, :integer, "STASH_DB_POOL_SIZE"},
   charset: "utf8mb4",
   collation: "utf8mb4_unicode_ci"
 

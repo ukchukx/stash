@@ -12,11 +12,11 @@
   </div>
 </template>
 <script>
-import { computed, reactive } from '@vue/composition-api';
-import EmptyList from '@/components/EmptyList';
-import MovieList from '@/components/MovieList';
-import AddMovie from '@/components/AddMovie';
-import eventBus from '@/eventBus';
+import { computed, reactive } from 'vue';
+import EmptyList from './EmptyList.vue';
+import MovieList from './MovieList.vue';
+import AddMovie from './AddMovie.vue';
+import eventBus from '../eventBus';
 
 export default {
   name: 'Movies',
@@ -32,7 +32,7 @@ export default {
     },
     tmdbToken: {
       type: String,
-      required: true
+      default: () => ''
     }
   },
   setup(props) {

@@ -40,10 +40,10 @@
   </div>
 </template>
 <script>
-import { computed, reactive } from '@vue/composition-api';
+import { computed, reactive } from 'vue';
 import VueTagsInput from '@johmun/vue-tags-input';
 import axios from 'axios';
-import Input from '@/components/Input';
+import Input from './Input.vue';
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 

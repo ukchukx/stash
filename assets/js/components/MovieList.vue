@@ -11,8 +11,8 @@
   </div>
 </template>
 <script>
-import { ref } from '@vue/composition-api';
-import MovieItem from '@/components/MovieItem';
+import { ref } from 'vue';
+import MovieItem from './MovieItem.vue';
 
 export default {
   name: 'MovieList',

@@ -27,25 +27,22 @@
 // >> liveSocket.enableLatencySim(1000)
 // window.liveSocket = liveSocket;
 
-import Vue from 'vue';
-import VueCompositionAPI from '@vue/composition-api';
+import { createApp } from 'vue';
 import axios from 'axios';
 
-import Signin from '@/components/Signin';
-import Signup from '@/components/Signup';
-import Stash from '@/components/Stash';
-
-Vue.config.productionTip = false;
+import App from './components/App.vue';
+import emitter from './eventBus';
+import router from './router';
+import store from './store';
+import '../css/app.css';
 
 const token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 }
 
-Vue.use(VueCompositionAPI);
-
-Vue.component(Signin.name, Signin);
-Vue.component(Signup.name, Signup);
-Vue.component(Stash.name, Stash);
-
-new Vue({ el: '#app' });
+createApp(App)
+  .provide('emitter', emitter)
+  .use(router)
+  .use(store)
+  .mount('#app');

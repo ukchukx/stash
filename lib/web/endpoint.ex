@@ -24,7 +24,7 @@ defmodule Stash.Web.Endpoint do
     at: "/",
     from: :stash,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(app.css app.js app.js.map fonts favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
