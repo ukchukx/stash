@@ -106,6 +106,7 @@ export default {
       timeout = setTimeout(() => {
         state.searching = true;
         state.searched = false;
+        state.bookSelected = false;
         state.options = [];
         axios
           .get(`${bookSearchBaseUrl}${state.form.title.trim()}`)

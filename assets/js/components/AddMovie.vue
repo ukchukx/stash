@@ -141,6 +141,7 @@ export default {
       timeout = setTimeout(() => {
         state.searching = true;
         state.searched = false;
+        state.movieSelected = false;
         state.options = [];
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
