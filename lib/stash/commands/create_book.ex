@@ -1,5 +1,5 @@
 defmodule Stash.Commands.CreateBook do
-  defstruct [:user_id, :list_id, :book_id, :isbn, :title, :notes, :thumbnail, tags: []]
+  defstruct [:user_id, :list_id, :book_id, :isbn, :title, :thumbnail, notes: "", tags: []]
 
   def assign_id(%__MODULE__{} = command, id), do: %__MODULE__{command | book_id: id}
 end

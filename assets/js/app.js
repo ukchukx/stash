@@ -36,10 +36,7 @@ import router from './router';
 import store from './store';
 import '../css/app.css';
 
-const token = document.head.querySelector('meta[name="csrf-token"]');
-if (token) {
-  axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-}
+axios.defaults.headers.common['Accept'] = 'application/json';
 
 createApp(App)
   .provide('emitter', emitter)

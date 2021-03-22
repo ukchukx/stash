@@ -23,7 +23,7 @@
         v-show="state.showMovieOptions"
         @click="movieSelected(i)"
         :key="i" v-for="(movie, i) in state.movieOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b">
+        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
         <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
           <img :src="movie.thumbnail" width="50" height="50">
         </div>
@@ -39,7 +39,7 @@
         v-show="state.showTvOptions"
         @click="tvSelected(i)"
         :key="i" v-for="(movie, i) in state.tvOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b">
+        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
         <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
           <img :src="movie.thumbnail" width="50" height="50">
         </div>
@@ -141,6 +141,7 @@ export default {
       timeout = setTimeout(() => {
         state.searching = true;
         state.searched = false;
+        state.options = [];
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
             state.options = movies.concat(shows);

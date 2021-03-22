@@ -1,10 +1,13 @@
 import axios from 'axios';
 
+const token = document.head.querySelector('meta[name="csrf-token"]');
+
 const commonRequestOptions = () => ({
   withCredentials: true,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json;charset=UTF-8',
+    'X-CSRF-TOKEN': token ? token.content : ''
   }
 });
 

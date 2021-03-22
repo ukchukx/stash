@@ -21,7 +21,7 @@
         v-show="state.noBooksSelected"
         @click="bookSelected(i)"
         :key="i" v-for="(book, i) in state.options" 
-        class="flex-grow flex px-4 py-2 items-center border-b">
+        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
         <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
           <img :src="book.thumbnail" width="50" height="50">
         </div>
@@ -67,11 +67,12 @@ export default {
   setup(props, { emit }) {
     const store = useStore();
     const currentYear = new Date().getFullYear();
-    const bookSearchBaseUrl = 'https://www.googleapis.com/books/v1/volumes?q=title:';
+    const bookSearchBaseUrl = 'https://www.googleapis.com/books/v1/volumes?fields=items(volumeInfo(title,imageLinks(thumbnail),industryIdentifiers))&q=title:';
     let timeout;
     const state = reactive({
       options: [],
       searching: false,
+      searched: false,
       bookSelected: false,
       tag: '',
       form: {
@@ -84,7 +85,9 @@ export default {
     state.disableSearchButton = computed(() => !state.form.title.length || state.searching);
     state.buttonText = computed(() => state.searching ? 'Searching...' : 'Search');
     state.hasThumbnail = computed(() => state.form.thumbnail && state.form.thumbnail.length > 0);
-    state.showNoResultsMessage = computed(() => !!state.options.length && !state.searching);
+    state.showNoResultsMessage = computed(
+      () => state.searched && !state.options.length && !state.searching
+    );
     state.noBooksSelected = computed(() => !!state.options.length && !state.bookSelected);
 
     const getIsbn = (identifiers) => {
@@ -94,7 +97,7 @@ export default {
       let record = identifiers.find(findIsbn13);
       if (!record) record = identifiers.find(findIsbn10);
 
-      return record.identifier;
+      return record ? record.identifier : null;
     };
 
     const searchForBooks = () => {
@@ -102,6 +105,8 @@ export default {
 
       timeout = setTimeout(() => {
         state.searching = true;
+        state.searched = false;
+        state.options = [];
         axios
           .get(`${bookSearchBaseUrl}${state.form.title.trim()}`)
           .then(({ data: { items } }) => {
@@ -110,7 +115,8 @@ export default {
                 const { title, imageLinks, industryIdentifiers } = volumeInfo;
                 const thumbnail = imageLinks && imageLinks.thumbnail ? imageLinks.thumbnail : null;
                 return { title, thumbnail, isbn: getIsbn(industryIdentifiers) };
-              });
+              })
+              .filter(({ isbn }) => !!isbn);
           })
           .catch((response) => {
             console.warn('error', response);
@@ -118,6 +124,7 @@ export default {
           })
           .finally(() => {
             state.searching = false;
+            state.searched = true;
           });
       }, 500);
     };

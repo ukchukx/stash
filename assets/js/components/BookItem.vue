@@ -3,8 +3,8 @@
   <div class="flex-grow flex px-4 py-2 items-center border-b">
     <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
       <a :href="bookHref">
-        <img v-if="hasThumbnail" :src="book.thumbnail" width="150" height="150">
-        <svg v-else width="150px" height="150px" class="fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25"><path d="M17,5.95v10.351c0,0.522-0.452,0.771-1,1.16c-0.44,0.313-1-0.075-1-0.587c0,0,0-9.905,0-10.114
+        <img v-if="hasThumbnail" :src="book.thumbnail" width="100" height="100">
+        <svg v-else width="100px" height="100px" class="fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25"><path d="M17,5.95v10.351c0,0.522-0.452,0.771-1,1.16c-0.44,0.313-1-0.075-1-0.587c0,0,0-9.905,0-10.114
           c0-0.211-0.074-0.412-0.314-0.535C14.446,6.102,6.948,2.16,6.948,2.16C6.827,2.115,6.299,1.782,5.595,2.144
           C4.926,2.488,4.562,2.862,4.469,3.038l8.18,4.482C12.866,7.634,13,7.81,13,8.036v10.802c0,0.23-0.142,0.476-0.369,0.585
           c-0.104,0.052-0.219,0.077-0.333,0.077c-0.135,0-0.271-0.033-0.386-0.104c-0.215-0.131-7.774-4.766-8.273-5.067
