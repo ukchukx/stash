@@ -24,6 +24,8 @@ const getters = {
   movies: ({ movies }) => movies,
   books: ({ books }) => books,
   list: ({ lists }) => (id) => lists.find((list) => list.id === id),
+  book: ({ books }) => (id) => books.find((book) => book.id === id),
+  movie: ({ movies }) => (id) => movies.find((movie) => movie.id === id),
   moviesForList: ({ movies }) => (id) => movies.filter(({ list_id }) => list_id === id),
   booksForList: ({ books }) => (id) => books.filter(({ list_id }) => list_id === id)
 }
@@ -31,6 +33,7 @@ const getters = {
 const deleteResource = (resource, id) => axios.delete(`/api/${resource}/${id}`, { ...commonRequestOptions() });
 const getResourceByList = (resource, id) => axios.get(`/api/${resource}/${id}`, { ...commonRequestOptions() });
 const createResource = (resource, data) => axios.post(`/api/${resource}`, data, { ...commonRequestOptions() });
+const updateResource = (resource, data) => axios.put(`/api/${resource}/${data.id}`, data, { ...commonRequestOptions() });
 
 // actions
 const actions = {
@@ -76,6 +79,13 @@ const actions = {
         return true;
       });
   },
+  updateMovie ({ commit }, data) {
+    return updateResource('movies', data)
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'movies', data });
+        return data;
+      });
+  },
   fetchBooks ({ commit }, id) {
     return getResourceByList('books', id)
       .then(({ data: { data } }) => {
@@ -95,6 +105,13 @@ const actions = {
       .then(() => {
         commit('remove', { key: 'books', id });
         return true;
+      });
+  },
+  updateBook ({ commit }, data) {
+    return updateResource('books', data)
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'books', data });
+        return data;
       });
   }
 }

@@ -5,7 +5,7 @@ defmodule Stash.Web.PageController do
 
   alias Stash.{Accounts, Books, Movies}
 
-  def index(%{assigns: %{current_user: %{"id" => user_id} = user}} = conn, _) do
+  def index(%{assigns: %{current_user: %{"id" => user_id}}} = conn, _) do
     {:ok, user} = Accounts.user_by_id(user_id)
     tmdb_token = Application.get_env(:stash, :tmdb_token)
 
@@ -77,6 +77,27 @@ defmodule Stash.Web.PageController do
     end
   end
 
+  def update_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, params) do
+    attrs =
+      params
+      |> AtomizeKeys.atomize_string_keys()
+      |> Map.take([:id, :tags])
+      |> Map.put(:user_id, user_id)
+
+    with {:ok, movie} <- Movies.update_movie(%{user_id: user_id, id: attrs.id}, attrs) do
+      conn
+      |> put_status(200)
+      |> json(%{data: movie})
+    else
+      {:error, err} ->
+        Logger.error("Error while updating movie #{inspect(err)}")
+
+        conn
+        |> put_status(400)
+        |> json(%{error: "Could not update movie"})
+    end
+  end
+
   def delete_movie(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => id}) do
     with :ok <- Movies.delete_movie(%{user_id: user_id, id: id}) do
       conn
@@ -110,6 +131,27 @@ defmodule Stash.Web.PageController do
         conn
         |> put_status(400)
         |> json(%{error: "Could not create book"})
+    end
+  end
+
+  def update_book(%{assigns: %{current_user: %{"id" => user_id}}} = conn, params) do
+    attrs =
+      params
+      |> AtomizeKeys.atomize_string_keys()
+      |> Map.take([:id, :notes, :tags])
+      |> Map.put(:user_id, user_id)
+
+    with {:ok, book} <- Books.update_book(%{user_id: user_id, id: attrs.id}, attrs) do
+      conn
+      |> put_status(200)
+      |> json(%{data: book})
+    else
+      {:error, err} ->
+        Logger.error("Error while updating book #{inspect(err)}")
+
+        conn
+        |> put_status(400)
+        |> json(%{error: "Could not update book"})
     end
   end
 

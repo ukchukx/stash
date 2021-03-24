@@ -29,9 +29,11 @@ defmodule Stash.Web.Router do
     delete "/lists/:id", PageController, :delete_list
     get "/movies/:id", PageController, :movies_in_list
     post "/movies", PageController, :create_movie
+    put "/movies/:id", PageController, :update_movie
     delete "/movies/:id", PageController, :delete_movie
     get "/books/:id", PageController, :books_in_list
     post "/books", PageController, :create_book
+    put "/books/:id", PageController, :update_book
     delete "/books/:id", PageController, :delete_book
   end
 

@@ -3,7 +3,9 @@ import Account from '../components/Account.vue';
 import MovieLists from '../components/MovieLists.vue';
 import BookLists from '../components/BookLists.vue';
 import Books from '../components/Books.vue';
+import Book from '../components/Book.vue';
 import Movies from '../components/Movies.vue';
+import Movie from '../components/Movie.vue';
 import Signin from '../components/Signin.vue';
 import Signup from '../components/Signup.vue';
 
@@ -31,12 +33,12 @@ const routes = [
   {
     path: '/m',
     name: 'Movie',
-    component: Movies // TODO: Change
+    component: Movie
   },
   {
     path: '/b',
     name: 'Book',
-    component: Books // TODO: Change
+    component: Book
   },
   {
     path: '/account',

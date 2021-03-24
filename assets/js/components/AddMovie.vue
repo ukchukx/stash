@@ -56,7 +56,6 @@
 
     <div v-show="state.movieSelected" class="flex flex-col">
       <img class="mb-2 mt-2" v-show="state.hasThumbnail" :src="state.form.thumbnail" width="150" height="150">
-      <!-- <VueTagsInput v-model="state.tag" :tags="state.tags" @tags-changed="updateTags" /> -->
       <button @click="saveMovie" class="btn btn-blue mt-3">Save</button>
     </div>
   </div>
@@ -64,7 +63,6 @@
 <script>
 import { computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import VueTagsInput from '@johmun/vue-tags-input';
 import axios from 'axios';
 import Input from './Input.vue';
 
@@ -72,7 +70,6 @@ export default {
   name: 'AddMovie',
   components: {
     Input,
-    VueTagsInput
   },
   props: {
     listId: {

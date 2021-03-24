@@ -39,7 +39,6 @@
 
     <div v-show="state.bookSelected" class="flex flex-col">
       <img class="mb-2 mt-2" v-show="state.hasThumbnail" :src="state.form.thumbnail" width="150" height="150">
-      <!-- <VueTagsInput v-model="state.tag" :tags="state.tags" @tags-changed="updateTags" /> -->
       <button @click="saveBook" class="btn btn-blue mt-3">Save</button>
     </div>
   </div>
@@ -47,15 +46,13 @@
 <script>
 import { computed, reactive } from 'vue';
 import { useStore } from 'vuex';
-import VueTagsInput from '@johmun/vue-tags-input';
 import axios from 'axios';
 import Input from './Input.vue';
 
 export default {
   name: 'AddBook',
   components: {
-    Input,
-    VueTagsInput
+    Input
   },
   props: {
     listId: {
@@ -74,7 +71,6 @@ export default {
       searching: false,
       searched: false,
       bookSelected: false,
-      tag: '',
       form: {
         title: '',
         isbn: '',
@@ -129,12 +125,7 @@ export default {
           });
       }, 500);
     };
-
     const onClose = () => emit('closed');
-
-    const updateTags = (tags) => {
-      state.form.tags = tags;
-    };
 
     const bookSelected = (index) => {
       const book = state.options[index];
@@ -154,7 +145,6 @@ export default {
     return {
       state,
       onClose,
-      updateTags,
       bookSelected,
       searchForBooks,
       saveBook
