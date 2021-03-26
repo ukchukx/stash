@@ -1,48 +1,48 @@
 <template>
   <!-- eslint-disable -->
-  <div> 
-    <div v-show="showList">
-      <button v-show="hasMovies" class="btn btn-white ml-4 my-3 w-20" @click="showAddMovieView">Add</button>
-      <MovieList v-show="hasMovies" :movies="state.movies" />
-      <EmptyList v-show="!hasMovies" resource="movies" @add-movie="showAddMovieView" />
+  <Page>
+    <div v-show="state.showList">
+      <h2 class="text-2xl text-gray-600 font-medium my-4 text-center">{{ state.list.name }}</h2>
+      <button v-if="state.hasMovies" class="btn btn-white ml-4 my-3 w-20" @click="showAddMovieView">Add</button>
+      <MovieList v-if="state.hasMovies" :movies="state.movies" />
+      <EmptyList v-else message="List is empty" @add-item-clicked="showAddMovieView" />
     </div>
-    <div v-show="showNew">
-      <AddMovie @movie-added="movieAdded" @closed="closeAddMovieView" :tmdb-token="tmdbToken" />
+
+    <div v-show="state.showNew">
+      <AddMovie @closed="closeAddMovieView" :list-id="state.listId" />
     </div>
-  </div>
+  </Page>
 </template>
 <script>
-import { computed, reactive } from '@vue/composition-api';
-import EmptyList from '@/components/EmptyList';
-import MovieList from '@/components/MovieList';
-import AddMovie from '@/components/AddMovie';
-import eventBus from '@/eventBus';
+import { computed, reactive, onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+import EmptyList from './EmptyList.vue';
+import MovieList from './MovieList.vue';
+import AddMovie from './AddMovie.vue';
+import Page from './Page.vue';
 
 export default {
   name: 'Movies',
   components: {
     AddMovie,
     EmptyList,
-    MovieList
+    MovieList,
+    Page
   },
-  props: {
-    initialMovies: {
-      type: Array,
-      default: () => []
-    },
-    tmdbToken: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
+    const store = useStore();
+    const listId = useRoute().query.id;
+
     const state = reactive({
-      movies: props.initialMovies,
-      view: 'list'
+      view: 'list',
+      listId,
+      list: computed(() => store.getters.list(listId)),
+      movies: computed(() => store.getters.moviesForList(listId))
     });
-    const hasMovies = computed(() => !!state.movies.length);
-    const showList = computed(() => state.view === 'list');
-    const showNew = computed(() => state.view === 'new');
+    state.hasMovies = computed(() => !!state.movies);
+    state.showNew = computed(() => state.view === 'new');
+    state.showList = computed(() => state.view === 'list');
 
     const showAddMovieView = () => {
       state.view = 'new';
@@ -50,22 +50,13 @@ export default {
     const closeAddMovieView = () => {
       state.view = 'list';
     };
-    const movieAdded = (movie) => {
-      state.movies.push(movie);
-    };
 
-    eventBus.$on('movie-deleted', (movieId) => {
-      state.movies = state.movies.filter(({ id }) => id !== movieId);
-    });
+    onBeforeMount(() => store.dispatch('fetchMovies', state.listId));
     
     return {
       state,
-      hasMovies,
       showAddMovieView,
-      closeAddMovieView,
-      showList,
-      showNew,
-      movieAdded
+      closeAddMovieView
     };
   }
 };

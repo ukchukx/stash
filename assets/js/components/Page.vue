@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable -->
   <div class="font-sans bg-gray-lighter flex flex-col min-h-screen w-full">
-    <TopBar :username="username" />
+    <TopBar :username="state.username" />
 
     <div class="h-screen flex-grow container mx-auto pb-8">
        <div class="flex flex-wrap pb-24">
@@ -11,15 +11,15 @@
           </div>
         </div>
        </div>
-      <BottomBar :selectedTab="state.selectedTab" />
+      <BottomBar />
     </div>
   </div>
 </template>
 <script>
-import TopBar from '@/components/TopBar';
-import BottomBar from '@/components/BottomBar';
-import eventBus from '@/eventBus';
-import { reactive } from '@vue/composition-api';
+import { computed, reactive } from 'vue';
+import { useStore } from 'vuex';
+import TopBar from './TopBar.vue';
+import BottomBar from './BottomBar.vue';
 
 export default {
   name: 'Page',
@@ -34,18 +34,10 @@ export default {
     }
   },
   setup() {
+    const store = useStore();
+    const guest = { email: 'Guest' };
     const state = reactive({
-      selectedTab: 'movies'
-    });
-
-    eventBus.$on('movies-selected', () => {
-      state.selectedTab = 'movies';
-    });
-    eventBus.$on('books-selected', () => {
-      state.selectedTab = 'books';
-    });
-    eventBus.$on('account-selected', () => {
-      state.selectedTab = 'account';
+      username: computed(() => (store.getters.user || guest).email)
     });
 
     return {

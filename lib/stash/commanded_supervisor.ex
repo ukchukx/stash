@@ -6,11 +6,14 @@ defmodule Stash.CommandedSupervisor do
   def start_link(_), do: Supervisor.start_link(__MODULE__, [], name: __MODULE__)
 
   def init(_arg) do
-    Supervisor.init([
-      Projectors.User,
-      Projectors.Book,
-      Projectors.Movie,
-      EventHandlers.Telemetry
-    ], strategy: :one_for_one)
+    Supervisor.init(
+      [
+        Projectors.Book,
+        Projectors.Movie,
+        Projectors.User,
+        EventHandlers.Telemetry
+      ],
+      strategy: :one_for_one
+    )
   end
 end

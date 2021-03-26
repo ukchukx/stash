@@ -1,23 +1,22 @@
 defmodule Stash.BookTest do
   alias Stash.{Books, DataCase}
-  alias Stash.Projections.Book
+  alias Stash.Projections.UserBook, as: Book
 
   use DataCase
 
   @moduletag models: :book
-  @moduletag :book
 
   describe "a book" do
     test "can be created" do
-      assert {:ok, %Book{id: book_id}} = fixture(:book)
-      assert {:ok, _} = Books.book_by_id(book_id)
+      user = %{lists: [list]} = create_user_having_a_list("book")
+      assert {:ok, %Book{id: book_id}} = create_book(user, list_id: list["id"])
+      assert {:ok, %Book{}} = Books.book_by_id(book_id)
     end
 
     test "can be updated" do
-      assert {:ok, %Book{id: book_id} = book} = fixture(:book)
-
+      user = %{lists: [list]} = create_user_having_a_list("book")
+      {:ok, %Book{} = book} = create_book(user, list_id: list["id"])
       params = build_book_params() |> Map.take([:notes, :tags])
-
       assert {:ok, %Book{} = updated_book} = Books.update_book(book, params)
 
       # Unchanged
@@ -31,9 +30,10 @@ defmodule Stash.BookTest do
     end
 
     test "can be deleted" do
-      assert {:ok, %Book{id: book_id} = book} = fixture(:book)
+      user = %{lists: [list], id: user_id} = create_user_having_a_list("book")
+      {:ok, %Book{} = book} = create_book(user, list_id: list["id"])
       assert :ok = Books.delete_book(book)
-      assert {:error, :not_found} = Books.book_by_id(book_id)
+      assert {:error, :not_found} = Books.book_by_user_and_id(user_id, book.id)
     end
   end
 end

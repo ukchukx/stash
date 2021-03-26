@@ -19,7 +19,6 @@ config :stash, Stash.Web.Endpoint,
   ],
   server: true
 
-
 # Do not print debug messages in production
 config :logger,
   level: :info,

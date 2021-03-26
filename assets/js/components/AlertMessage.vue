@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-import { computed, watch, reactive } from '@vue/composition-api';
+import { computed, watch, reactive } from 'vue';
 
 export default {
   name: 'AlertMessage',

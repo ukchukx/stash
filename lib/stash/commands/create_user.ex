@@ -1,5 +1,5 @@
 defmodule Stash.Commands.CreateUser do
-  defstruct [:user_id, :password, :hashed_password, :email, active: true]
+  defstruct [:user_id, :password, :email, active: true]
 
   alias Stash.Support.Auth
 
@@ -13,9 +13,8 @@ defmodule Stash.Commands.CreateUser do
   end
 
   def hash_password(%__MODULE__{password: password} = command) do
-    %__MODULE__{command | password: nil, hashed_password: Auth.hash_password(password)}
+    %__MODULE__{command | password: Auth.hash_password(password)}
   end
-
 end
 
 defimpl Stash.Protocol.UniqueFields, for: Stash.Commands.CreateUser do
@@ -36,10 +35,9 @@ defimpl Stash.Protocol.UniqueFields, for: Stash.Commands.CreateUser do
   defp validate_email(email, user_id) do
     case Email.user_email_taken?(email, user_id) do
       false -> :ok
-      true  -> {:email, "has been taken"}
+      true -> {:email, "has been taken"}
     end
   end
-
 end
 
 defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateUser do
@@ -52,11 +50,11 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateUser do
   def validate(%{user_id: user_id, email: email} = command) do
     user_id
     |> validate_user_id
-    |> Kernel.++(validate_hashed_password(command.hashed_password))
+    |> Kernel.++(validate_password(command.password))
     |> Kernel.++(validate_email(email))
     |> Kernel.++(validate_active(command.active))
     |> case do
-      []       -> :ok
+      [] -> :ok
       err_list -> {:error, err_list}
     end
   end
@@ -67,17 +65,17 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateUser do
 
   defp validate_user_id(user_id) do
     case Uuid.validate(user_id) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:user_id, err}]
     end
   end
 
-  defp validate_hashed_password(x) when x == "" or is_nil(x), do: [{:hashed_password, "is empty"}]
+  defp validate_password(x) when x == "" or is_nil(x), do: [{:password, "is empty"}]
 
-  defp validate_hashed_password(hashed_password) do
-    case StringValidator.validate(hashed_password) do
-      :ok           -> []
-      {:error, err} -> [{:hashed_password, err}]
+  defp validate_password(password) do
+    case StringValidator.validate(password) do
+      :ok -> []
+      {:error, err} -> [{:password, err}]
     end
   end
 
@@ -87,7 +85,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateUser do
 
   defp validate_email(email) do
     case Email.validate(email) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:email, err}]
     end
   end

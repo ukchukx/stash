@@ -1,18 +1,17 @@
 # Stash
 
-To start your Phoenix server:
-
-  * Setup the project with `mix setup`
-  * Start Phoenix endpoint with `mix phx.server`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Environment variables:
+```
+STASH_DB_USER=<string>
+STASH_DB_PASS=<string>
+STASH_READ_DB=<string>
+STASH_EVENT_DB=<string>
+STASH_TEST_READ_DB=<string>
+STASH_TEST_EVENT_DB=<string>
+STASH_DB_HOST=<string>
+STASH_DNS_ADDR=<string>
+STASH_DB_POOL_SIZE=<integer>
+STASH_HTTP_PORT=<integer>
+STASH_SECRET_KEY_BASE="<string>"
+TMDB_TOKEN="<string>"
+```

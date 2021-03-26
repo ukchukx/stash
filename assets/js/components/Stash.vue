@@ -7,12 +7,12 @@
   </Page>
 </template>
 <script>
-import { reactive, computed } from '@vue/composition-api';
-import Page from '@/components/Page';
-import Movies from '@/components/Movies';
-import Books from '@/components/Books';
-import Account from '@/components/Account';
-import eventBus from '@/eventBus';
+import { reactive, computed } from 'vue';
+import Page from './Page.vue';
+import Movies from './Movies.vue';
+import Books from './Books.vue';
+import Account from './Account.vue';
+import eventBus from '../eventBus';
 
 export default {
   name: 'Stash',

@@ -14,6 +14,12 @@ config :stash, Stash.Repo,
   database: {:system, "STASH_TEST_READ_DB"},
   pool_size: 5
 
+config :stash, Stash.CommandedApp,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.InMemory,
+    serializer: Commanded.Serialization.JsonSerializer
+  ]
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :stash, Stash.Web.Endpoint,

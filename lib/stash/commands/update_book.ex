@@ -1,5 +1,5 @@
 defmodule Stash.Commands.UpdateBook do
-  defstruct [:book_id, :tags, :notes]
+  defstruct [:book_id, :list_id, :user_id, :tags, :notes]
 
   def assign_book(%__MODULE__{} = command, %{id: id} = _book) do
     %__MODULE__{command | book_id: id}
@@ -12,18 +12,34 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.UpdateBook do
   def validate(%{book_id: book_id} = command) do
     book_id
     |> validate_book_id
+    |> Kernel.++(validate_user_id(command.user_id))
+    |> Kernel.++(validate_list_id(command.list_id))
     |> Kernel.++(validate_tags(command.tags))
     |> Kernel.++(validate_notes(command.notes))
     |> case do
-      []       -> :ok
+      [] -> :ok
       err_list -> {:error, err_list}
     end
   end
 
   defp validate_book_id(book_id) do
     case Uuid.validate(book_id) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:book_id, err}]
+    end
+  end
+
+  defp validate_list_id(list_id) do
+    case Uuid.validate(list_id) do
+      :ok -> []
+      {:error, err} -> [{:list_id, err}]
+    end
+  end
+
+  defp validate_user_id(user_id) do
+    case Uuid.validate(user_id) do
+      :ok -> []
+      {:error, err} -> [{:user_id, err}]
     end
   end
 
@@ -33,7 +49,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.UpdateBook do
 
   defp validate_tags(tags) do
     case ListValidator.validate_list_of_string(tags) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:tags, err}]
     end
   end
@@ -44,7 +60,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.UpdateBook do
 
   defp validate_notes(notes) do
     case StringValidator.validate(notes) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:notes, err}]
     end
   end

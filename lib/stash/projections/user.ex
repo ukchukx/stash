@@ -7,6 +7,7 @@ defmodule Stash.Projections.User do
     :id,
     :email,
     :active,
+    :lists,
     :inserted_at,
     :updated_at
   ]
@@ -17,6 +18,7 @@ defmodule Stash.Projections.User do
     field :password, :string
     field :email, :string, unique: true
     field :active, :boolean, default: true
+    field :lists, {:array, :map}, default: []
 
     timestamps(type: :utc_datetime)
   end

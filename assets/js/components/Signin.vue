@@ -2,17 +2,16 @@
   <!-- eslint-disable -->
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 bg-blue-500">
     <div class="max-w-sm w-full">
-      <AlertMessage :text="errorMessage" isError />
+      <AlertMessage :text="state.errorMessage" isError />
       <div class="w-full">
         <form 
-          :action="formPath" 
           method="POST" 
           ref="form" 
           class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <CsrfToken />
 
           <Input 
-            v-model="state.email"
+            v-model="state.form.email"
             :validators="emailValidators"
             @errors="onEmailErrors"
             :showErrors="false"
@@ -24,7 +23,7 @@
             extraInputClasses="w-full" />
           
           <Input 
-            v-model="state.password"
+            v-model="state.form.password"
             :validators="passwordValidators"
             @errors="onPasswordErrors"
             :showErrors="false"
@@ -37,7 +36,7 @@
           
           <div class="flex items-center justify-between">
             <button 
-              :disabled="hasErrors"
+              v-if="!state.hasErrors"
               @click="submitForm"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
               type="button">
@@ -47,6 +46,9 @@
               Forgot Password?
             </a>
           </div>
+          <a :href="state.signupPath" class="inline-block align-baseline font-bold text-sm text-blue-500">
+            Don't have an account? Sign Up
+          </a>
         </form>
         <p class="text-center text-white text-xs">
           &copy;2020 Stash
@@ -56,11 +58,13 @@
   </div>
 </template>
 <script>
-import { computed, reactive } from '@vue/composition-api';
-import Input from '@/components/Input';
-import AlertMessage from '@/components/AlertMessage';
-import CsrfToken from '@/components/CsrfToken';
-import { isEmail, minLength } from '@/validators';
+import { computed, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import Input from './Input.vue';
+import AlertMessage from './AlertMessage.vue';
+import CsrfToken from './CsrfToken.vue';
+import { isEmail, minLength } from '../validators';
 
 export default {
   name: 'Signin',
@@ -69,30 +73,26 @@ export default {
     CsrfToken,
     Input
   },
-  props: {
-    formPath: {
-      type: String,
-      required: true
-    },
-    errorMessage: {
-      type: String,
-      default: () => ''
-    }
-  },
-  setup(props, { refs }) {
+  setup() {
+    const router = useRouter();
+    const form = ref(null);
     const emailValidators = [isEmail()];
     const passwordValidators = [minLength(8)];
     const state = reactive({
-      email: '', 
-      password: '',
+      form: {
+        email: '', 
+        password: ''
+      },
       emailErrors: [],
-      passwordErrors: []
+      passwordErrors: [],
+      signupPath: router.resolve({ name: 'Signup' }).href,
+      errorMessage: ''
     });
-    const hasErrors = computed(() => {
-      const { email, password, passwordErrors, emailErrors } = state;
+    state.hasErrors = computed(() => {
+      const { form: { email, password }, passwordErrors, emailErrors } = state;
       const errors = emailErrors.concat(passwordErrors).length !== 0;
 
-      return email.trim().length === 0 || password.trim().length === 0 || errors;
+      return !email.trim() || !password.trim() || errors;
     });
 
     const onEmailErrors = (errors) => {
@@ -103,7 +103,18 @@ export default {
     };
 
     const submitForm = () => { 
-      refs.form.submit();
+      state.errorMessage = '';
+      axios.post('/api/signin', state.form)
+      .then(({ data: { authenticated } }) => {
+        if (authenticated) {
+          router.push({ name: 'MovieLists' });
+        } else {
+          state.errorMessage = 'Invalid email/password';
+        }
+      })
+      .catch(() => {
+        state.errorMessage = 'Invalid email/password';
+      });
     };
 
     return {
@@ -112,8 +123,8 @@ export default {
       onEmailErrors,
       onPasswordErrors,
       state,
-      hasErrors,
-      submitForm
+      submitForm,
+      form
     };
   }
 };

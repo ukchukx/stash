@@ -7,9 +7,11 @@ defmodule Stash.Repo.Migrations.CreateUsers do
       add :active, :boolean
       add :email, :string
       add :password, :string
+      add :lists, {:array, :map}, default: []
 
       timestamps(type: :utc_datetime)
     end
+
     create index(:users, [:email])
   end
 end

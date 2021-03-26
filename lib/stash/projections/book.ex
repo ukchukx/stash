@@ -5,11 +5,8 @@ defmodule Stash.Projections.Book do
   @primary_key {:id, :binary_id, autogenerate: false}
   @fields [
     :id,
-    :user_id,
     :title,
     :isbn,
-    :notes,
-    :tags,
     :thumbnail,
     :inserted_at,
     :updated_at
@@ -18,12 +15,9 @@ defmodule Stash.Projections.Book do
   @derive {Jason.Encoder, only: @fields}
 
   schema "books" do
-    field :user_id, :binary_id
     field :title, :string
     field :isbn, :string
-    field :notes, :string
     field :thumbnail, :string
-    field :tags, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)
   end

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stash-init-sql
+  namespace: stash
+data:
+  createdb.sql: |
+    CREATE DATABASE reads ENCODING UTF8;
+    GRANT ALL PRIVILEGES ON DATABASE reads TO stash;
+    GRANT ALL PRIVILEGES ON DATABASE events TO stash;
+    ALTER USER stash WITH SUPERUSER;
+    ALTER USER stash PASSWORD '';
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stash-db
+  namespace: stash
+  labels:
+    app: stash-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stash-db
+  template:
+    metadata:
+      labels:
+        app: stash-db
+    spec:
+      containers:
+      - name: stash-db
+        image: postgres:11.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: init-sql
+          mountPath: /docker-entrypoint-initdb.d/createdb.sql
+          subPath: createdb.sql
+          readOnly: true
+        - name: stash-data
+          mountPath: /var/lib/prostgresql/data
+        env:
+        - name: POSTGRES_DB
+          value: 'events'
+        - name: POSTGRES_USER
+          value: 'stash'
+        - name: POSTGRES_PASSWORD
+          value: ''
+      volumes:
+      - name: stash-data
+        hostPath:
+          path: /var/microk8s/data/stash/data
+          type: DirectoryOrCreate
+      - name: init-sql
+        configMap:
+          name: stash-init-sql
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: stash-db
+  namespace: stash
+spec:
+  ports:
+  - name: postgresql
+    port: 5432
+  selector:
+    app: stash-db

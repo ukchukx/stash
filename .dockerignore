@@ -1,0 +1,6 @@
+node_modules/
+.idea/
+.elixir_ls/
+_build/
+deps/
+test/

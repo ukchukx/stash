@@ -5,7 +5,7 @@ defmodule Stash.AggregateCase do
 
   use ExUnit.CaseTemplate
 
-  using [aggregate: aggregate] do
+  using aggregate: aggregate do
     quote bind_quoted: [aggregate: aggregate] do
       @aggregate_module aggregate
 
@@ -36,29 +36,36 @@ defmodule Stash.AggregateCase do
 
       # execute one or more commands against an aggregate
       defp execute(commands, aggregate \\ %@aggregate_module{})
+
       defp execute(commands, aggregate) do
         commands
-        |> List.wrap
+        |> List.wrap()
         |> Enum.reduce({aggregate, [], nil}, fn
-          (command, {aggregate, _events, nil}) ->
+          command, {aggregate, _events, nil} ->
             case @aggregate_module.execute(aggregate, command) do
               {:error, reason} = error -> {aggregate, nil, error}
               events -> {evolve(aggregate, events), events, nil}
             end
-          (command, {aggregate, _events, _error} = reply) -> reply
+
+          command, {aggregate, _events, _error} = reply ->
+            reply
         end)
       end
 
       # apply the given events to the aggregate state
       defp evolve(aggregate, events) do
         events
-        |> List.wrap
+        |> List.wrap()
         |> Enum.reduce(aggregate, &@aggregate_module.apply(&2, &1))
       end
     end
   end
 
   setup do
-    Stash.Storage.reset!()
+    {:ok, _apps} = Application.ensure_all_started(:stash)
+
+    on_exit(fn ->
+      :ok = Application.stop(:stash)
+    end)
   end
 end

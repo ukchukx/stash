@@ -1,8 +1,7 @@
 defmodule Stash.Commands.CreateBook do
-  defstruct [:user_id, :book_id, :isbn, :title, :notes, :thumbnail, :tags]
+  defstruct [:user_id, :list_id, :book_id, :isbn, :title, :thumbnail, notes: "", tags: []]
 
   def assign_id(%__MODULE__{} = command, id), do: %__MODULE__{command | book_id: id}
-
 end
 
 defimpl Stash.Protocol.UniqueFields, for: Stash.Commands.CreateBook do
@@ -13,20 +12,19 @@ defimpl Stash.Protocol.UniqueFields, for: Stash.Commands.CreateBook do
   def unique(%{isbn: ""} = _command), do: {:error, [isbn: "is not provided"]}
 
   def unique(%{isbn: isbn, user_id: user_id} = _command) do
-    validate_isbn(isbn, user_id)
+    validate_isbn(user_id, isbn)
     |> case do
       :ok -> :ok
       err -> {:error, Keyword.new([err])}
     end
   end
 
-  defp validate_isbn(isbn, user_id) do
-    case ISBN.isbn_taken?(isbn, user_id) do
+  defp validate_isbn(user_id, isbn) do
+    case ISBN.isbn_taken?(user_id, isbn) do
       false -> :ok
-      true  -> {:isbn, "has been used"}
+      true -> {:isbn, "has been used"}
     end
   end
-
 end
 
 defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
@@ -36,27 +34,35 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
     user_id
     |> validate_user_id
     |> Kernel.++(validate_book_id(book_id))
+    |> Kernel.++(validate_list_id(command.list_id))
     |> Kernel.++(validate_thumbnail(command.thumbnail))
     |> Kernel.++(validate_tags(command.tags))
     |> Kernel.++(validate_notes(command.notes))
     |> Kernel.++(validate_isbn(command.isbn))
     |> Kernel.++(validate_title(command.title))
     |> case do
-      []       -> :ok
+      [] -> :ok
       err_list -> {:error, err_list}
     end
   end
 
   defp validate_user_id(user_id) do
     case Uuid.validate(user_id) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:user_id, err}]
+    end
+  end
+
+  defp validate_list_id(list_id) do
+    case Uuid.validate(list_id) do
+      :ok -> []
+      {:error, err} -> [{:list_id, err}]
     end
   end
 
   defp validate_book_id(book_id) do
     case Uuid.validate(book_id) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:book_id, err}]
     end
   end
@@ -67,7 +73,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
 
   defp validate_tags(tags) do
     case ListValidator.validate_list_of_string(tags) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:tags, err}]
     end
   end
@@ -78,7 +84,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
 
   defp validate_notes(notes) do
     case StringValidator.validate(notes) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:notes, err}]
     end
   end
@@ -89,7 +95,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
 
   defp validate_title(title) do
     case StringValidator.validate(title) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:title, err}]
     end
   end
@@ -100,7 +106,7 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
 
   defp validate_isbn(isbn) do
     case ISBN.validate(isbn) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:isbn, err}]
     end
   end
@@ -109,9 +115,8 @@ defimpl Stash.Protocol.ValidCommand, for: Stash.Commands.CreateBook do
 
   defp validate_thumbnail(thumbnail) do
     case URIValidator.validate(thumbnail) do
-      :ok           -> []
+      :ok -> []
       {:error, err} -> [{:thumbnail, err}]
     end
   end
-
 end

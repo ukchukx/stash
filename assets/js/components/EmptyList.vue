@@ -12,8 +12,8 @@
           C2.583,12.501,3.008,12,3.567,12h12.867c0.558,0,0.983,0.501,0.891,1.052L16.959,15.245z"/>
         </svg>
       </div>
-      <p class="text-2xl text-gray-600 font-medium mb-4">You have no {{ resource }}</p>
-      <div>
+      <p class="text-2xl text-gray-600 font-medium mb-4">{{ message }}</p>
+      <div v-if="showButton">
         <button 
           @click="addClicked"
           type="button" 
@@ -28,14 +28,19 @@
 export default {
   name: 'EmptyList',
   props: {
-    resource: {
+    showButton: {
+      type: Boolean,
+      default: () => true
+    },
+    message: {
       type: String,
-      required: true
+      default: () => 'You have no items'
     }
   },
-  setup({ resource }, { emit }) {
+  emits: ['add-item-clicked'],
+  setup(props, { emit }) {
     const addClicked = () => {
-      emit(resource === 'books' ? 'add-book' : 'add-movie');
+      emit('add-item-clicked');
     };
 
     return {
