@@ -36,13 +36,14 @@ defmodule Stash.Web.PageController do
   def create_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{} = params) do
     {:ok, %{lists: lists}} = Accounts.user_by_id(user_id)
     existing_list_ids = Enum.map(lists, & &1["id"])
+
     attrs =
       params
       |> AtomizeKeys.atomize_string_keys()
       |> Map.take([:name, :type])
 
     {:ok, %{lists: lists}} = Accounts.create_list(attrs, %{user: %{id: user_id}})
-    new_list = Enum.find(lists, & &1["id"] not in existing_list_ids)
+    new_list = Enum.find(lists, &(&1["id"] not in existing_list_ids))
 
     conn
     |> put_status(201)
@@ -51,6 +52,7 @@ defmodule Stash.Web.PageController do
 
   def delete_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => list_id}) do
     :ok = Accounts.delete_list(%{id: user_id}, list_id)
+
     conn
     |> put_resp_header("content-type", "application/json")
     |> send_resp(204, "")

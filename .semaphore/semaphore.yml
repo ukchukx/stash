@@ -37,30 +37,25 @@ blocks:
   #           - cache store
   #           - cache store et-dialyzer-plt priv/plts/
 
-  # - name: Analyze
-  #   task:
-  #     env_vars:
-  #       - name: MIX_ENV
-  #         value: "dev"
-  #     prologue:
-  #       commands:
-  #         - checkout
-  #         - kiex install 1.11
-  #         - sem-version elixir 1.11
-  #         - mix local.hex --force
-  #         - mix local.rebar --force
-  #         - cache restore
-  #         - cache restore et-dialyzer-plt
-  #     jobs:
-  #       - name: credo
-  #         commands:
-  #           - mix credo --strict
-  #       - name: dialyzer
-  #         commands:
-  #           - mix dialyzer --no-compile
-  #       - name: formatter
-  #         commands:
-  #           - mix format --check-formatted
+  - name: Analyze
+    task:
+      env_vars:
+        - name: MIX_ENV
+          value: "test"
+      prologue:
+        commands:
+          - checkout
+          - kiex install 1.11
+          - sem-version elixir 1.11
+          - mix local.hex --force
+          - mix local.rebar --force
+          - cache restore
+          - mix do deps.get, compile
+          - cache store
+      jobs:
+        - name: formatter
+          commands:
+            - mix format --check-formatted
 
   - name: Test
     task:
