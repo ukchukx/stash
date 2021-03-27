@@ -37,7 +37,7 @@ blocks:
   #           - cache store
   #           - cache store et-dialyzer-plt priv/plts/
 
-  - name: Analyze
+  - name: Fetch deps
     task:
       env_vars:
         - name: MIX_ENV
