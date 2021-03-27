@@ -41,7 +41,7 @@ spec:
           periodSeconds: 30
         env:
         - name: STASH_DB_USER
-          value: 'expense_tracker'
+          value: 'stash'
         - name: STASH_DB_PASS
           valueFrom:
             secretKeyRef:
