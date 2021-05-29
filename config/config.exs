@@ -1,10 +1,3 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
-
-# General application configuration
 use Mix.Config
 
 config :stash, :router, timeout: 10_000
@@ -32,6 +25,11 @@ config :stash, Stash.Web.Endpoint,
   secret_key_base: {:system, "STASH_SECRET_KEY_BASE"},
   render_errors: [view: Stash.Web.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Stash.PubSub,
+  http: [
+    port: {:system, :integer, "STASH_HTTP_PORT"},
+    transport_options: [socket_opts: [:inet6]]
+  ],
+  url: [host: {:system, "STASH_DNS_ADDR"}, port: 80],
   live_view: [signing_salt: "Oky+4yOc"]
 
 # Configures Elixir's Logger
