@@ -27,6 +27,7 @@ defmodule Stash.Web.SessionController do
     else
       err ->
         Logger.error("Could not create account due to: #{inspect(err)}")
+
         conn
         |> put_status(400)
         |> json(%{created: false})
