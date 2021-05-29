@@ -37,6 +37,7 @@ defmodule Stash.Application do
         if Application.get_env(:stash, :env) != :test do
           SetupDatabase.run_migrations()
         end
+
         res
 
       err_res ->
