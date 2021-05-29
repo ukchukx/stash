@@ -3,7 +3,7 @@
   <Page :username="user.email">
     <Movies v-show="showMovies" :initial-movies="movies" :tmdb-token="tmdbToken" />
     <Books v-show="showBooks" :initial-books="books" />
-    <Account v-show="showAccount" />
+    <Account v-show="showAccount" :user="user" />
   </Page>
 </template>
 <script>

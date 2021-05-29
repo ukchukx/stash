@@ -136,6 +136,7 @@ export default {
       const title = state.form.title.trim();
       
       timeout = setTimeout(() => {
+        state.options = [];
         state.searching = true;
         state.searched = false;
         state.movieSelected = false;
