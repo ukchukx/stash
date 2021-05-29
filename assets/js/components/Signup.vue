@@ -112,7 +112,8 @@ export default {
 
     const submitForm = () => {
       state.errorMessage = '';
-      axios.post('/signup', state.form)
+      const token = document.head.querySelector('meta[name="csrf-token"]');
+      axios.post('/api/signup', state.form, { headers: { 'X-CSRF-TOKEN': token ? token.content : '' } })
       .then(({ data: { created } }) => {
         if (created) {
           router.push({ name: 'MovieLists' });

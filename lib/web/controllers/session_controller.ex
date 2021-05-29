@@ -1,5 +1,6 @@
 defmodule Stash.Web.SessionController do
   use Stash.Web, :controller
+  require Logger
 
   def signin(%{assigns: %{current_user: %{}}} = conn, _) do
     redirect(conn, to: Routes.page_path(conn, :index))
@@ -24,7 +25,8 @@ defmodule Stash.Web.SessionController do
       |> put_status(201)
       |> json(%{created: true})
     else
-      _ ->
+      err ->
+        Logger.error("Could not create account due to: #{inspect(err)}")
         conn
         |> put_status(400)
         |> json(%{created: false})
