@@ -14,7 +14,7 @@
         :disabled="!state.canAddList"
         class="flex-shrink-0 bg-blue-500 border-blue-500 text-sm border-4 text-white py-1 px-2 rounded" 
         type="button">
-        Create
+        {{ state.buttonText }}
       </button>
     </div>
   </form>
@@ -25,7 +25,7 @@ import { useStore } from 'vuex';
 import List from './List.vue';
 
 export default {
-  name: 'NewListForm',
+  name: 'ListForm',
   components: {
     List
   },
@@ -37,22 +37,29 @@ export default {
     listType: {
       type: String,
       required: true
+    },
+    list: {
+      type: Object,
+      default: () => ({})
     }
   },
   setup(props) {
     const store = useStore();
     const state = reactive({
       form: {
-        name: '',
+        id: props.list.id,
+        name: props.list.name || '',
         type: props.listType
       }
     });
     state.canAddList = computed(() => !!state.form.name);
+    state.buttonText = computed(() => props.list.id ? 'Update' : 'Create');
+    state.command = computed(() => props.list.id ? 'updateList' : 'createList');
 
     const addList = () => {
-      store.dispatch('createList', state.form)
+      store.dispatch(state.command, state.form)
         .then(() => {
-          state.form.name = '';
+          if (!state.form.id) state.form.name = '';
         });
     };
 

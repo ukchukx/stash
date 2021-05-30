@@ -92,8 +92,16 @@ defmodule Stash.Accounts do
   end
 
   def create_list(attrs = %{}, %{user: user = %{id: user_id}} = _context) do
-    with {:ok, _state} <- user |> build_create_list_command(attrs) |> Commands.dispatch() do
-      user_by_id(user_id)
+    with %{list_id: list_id} = command = user |> build_create_list_command(attrs),
+         {:ok, _state} <- command |> Commands.dispatch() do
+      user_id
+      |> user_by_id()
+      |> elem(1)
+      |> get_list_from_user(list_id)
+      |> case do
+        nil -> {:error, :not_found}
+        list -> {:ok, list}
+      end
     else
       reply -> reply
     end
@@ -105,7 +113,14 @@ defmodule Stash.Accounts do
          true <- not is_nil(list),
          attrs = Map.put(attrs, :user_id, id),
          {:ok, %{id: id}} <- list |> build_update_list_command(attrs) |> Commands.dispatch() do
-      user_by_id(id)
+      id
+      |> user_by_id()
+      |> elem(1)
+      |> get_list_from_user(list_id)
+      |> case do
+        nil -> {:error, :not_found}
+        list -> {:ok, list}
+      end
     else
       false -> {:error, :not_found}
       reply -> reply
@@ -130,5 +145,9 @@ defmodule Stash.Accounts do
     |> String.downcase()
     |> Users.by_email()
     |> Queries.fetch_one()
+  end
+
+  defp get_list_from_user(_user = %{lists: lists}, list_id) do
+    Enum.find(lists, &(&1["id"] == list_id))
   end
 end

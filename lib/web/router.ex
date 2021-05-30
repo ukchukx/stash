@@ -29,6 +29,7 @@ defmodule Stash.Web.Router do
     post "/signin", SessionController, :create_session
     get "/lists", PageController, :lists
     post "/lists", PageController, :create_list
+    put "/lists/:id", PageController, :update_list
     delete "/lists/:id", PageController, :delete_list
     get "/movies/:id", PageController, :movies_in_list
     post "/movies", PageController, :create_movie

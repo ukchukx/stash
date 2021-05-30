@@ -1,7 +1,7 @@
 <template>
   <!-- eslint-disable -->
   <div class="flex justify-between px-6">
-    <NewListForm :list-type="listType" />
+    <ListForm :list-type="listType" />
   </div>
 
   <List v-for="(list, i) in lists" :key="i" :list="list" />
@@ -9,13 +9,13 @@
 <script>
 import { computed, reactive } from 'vue';
 import List from './List.vue';
-import NewListForm from './NewListForm.vue';
+import ListForm from './ListForm.vue';
 
 export default {
   name: 'Lists',
   components: {
     List,
-    NewListForm
+    ListForm
   },
   props: {
     lists: {

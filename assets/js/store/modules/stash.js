@@ -51,6 +51,13 @@ const actions = {
         return data;
       });
   },
+  updateList ({ commit }, data) {
+    return updateResource('lists', data)
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'lists', data });
+        return data;
+      });
+  },
   deleteList ({ commit }, id) {
     return deleteResource('lists', id)
       .then(() => {

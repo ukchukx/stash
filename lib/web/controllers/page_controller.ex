@@ -34,20 +34,37 @@ defmodule Stash.Web.PageController do
   end
 
   def create_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{} = params) do
-    {:ok, %{lists: lists}} = Accounts.user_by_id(user_id)
-    existing_list_ids = Enum.map(lists, & &1["id"])
-
     attrs =
       params
       |> AtomizeKeys.atomize_string_keys()
       |> Map.take([:name, :type])
 
-    {:ok, %{lists: lists}} = Accounts.create_list(attrs, %{user: %{id: user_id}})
-    new_list = Enum.find(lists, &(&1["id"] not in existing_list_ids))
+    {:ok, new_list} = Accounts.create_list(attrs, %{user: %{id: user_id}})
 
     conn
     |> put_status(201)
     |> json(%{data: new_list})
+  end
+
+  def update_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{} = params) do
+    attrs =
+      params
+      |> AtomizeKeys.atomize_string_keys()
+      |> Map.take([:id, :name])
+      |> Map.put(:user_id, user_id)
+
+    with {:ok, list} <- Accounts.update_list(%{id: user_id}, attrs.id, attrs) do
+      conn
+      |> put_status(200)
+      |> json(%{data: list})
+    else
+      {:error, err} ->
+        Logger.error("Error while updating list #{inspect(err)}")
+
+        conn
+        |> put_status(400)
+        |> json(%{error: "Could not update list"})
+    end
   end
 
   def delete_list(%{assigns: %{current_user: %{"id" => user_id}}} = conn, %{"id" => list_id}) do
