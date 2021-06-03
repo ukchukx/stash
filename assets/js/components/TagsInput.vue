@@ -22,16 +22,17 @@ export default {
     let tagify;
     const initialized = ref(false);
     const el = ref(null);
-    const tags = ref(props.modelValue);
+    const tagObjects = props.modelValue
+      .filter(x => !!x)
+      .map(x => typeof x === 'string' ? ({ value: x }) : x);
+    const tags = ref(tagObjects);
 
     const strToArray = (tagsStr) => tagsStr.startsWith('[') ? JSON.parse(tagsStr) : tagsStr.split(',');
 
     const onChange = (e) => {
-      let updatedValue = e.target.value || [];
-      updatedValue = typeof updatedValue === 'string' ? strToArray(updatedValue) : updatedValue;
-      updatedValue = updatedValue.map(({ value }) => value);
-      tags.value = updatedValue;
-      emit('update:modelValue', updatedValue);
+      const updatedValue = e.target.value || [];
+      tags.value = typeof updatedValue === 'string' ? strToArray(updatedValue) : updatedValue;
+      emit('update:modelValue', tags.value.map(({ value }) => value));
     };
 
     watch(
