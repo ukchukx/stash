@@ -15,20 +15,11 @@
       {{ state.buttonText }}
     </button>
     <div v-show="!state.fetchingDetails">
-      <div 
+      <BookOption 
         v-show="state.noBooksSelected"
         @click="bookSelected(i)"
-        :key="i" v-for="(book, i) in state.options" 
-        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
-        <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
-          <img :src="book.thumbnail" width="50" height="50">
-        </div>
-        <div class="flex w-3/5 md:w3/4 text-gray-600">
-          <span>
-            {{ book.title }}
-          </span>
-        </div>
-      </div>
+        :key="i" v-for="(book, i) in state.options"
+        :item="book" />
       
       <p v-show="state.showNoResultsMessage">No books found</p>
     </div>
@@ -36,7 +27,7 @@
     <h4 v-show="state.fetchingDetails" class="italic">Fetching details...</h4>
 
     <div v-show="state.bookSelected" class="flex flex-col">
-      <img class="mb-2 mt-2" v-show="state.hasThumbnail" :src="state.form.thumbnail" width="150" height="150">
+      <BookOption v-show="state.hasThumbnail" :item="state.form" />
       <button @click="saveBook" class="btn btn-blue mt-3">Save</button>
     </div>
   </div>
@@ -47,12 +38,14 @@ import { useStore } from 'vuex';
 import axios from 'axios';
 import Input from './Input.vue';
 import CloseButton from './CloseButton.vue';
+import BookOption from './BookOption.vue';
 
 export default {
   name: 'AddBook',
   components: {
     Input,
-    CloseButton
+    CloseButton,
+    BookOption
   },
   props: {
     listId: {

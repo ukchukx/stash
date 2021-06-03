@@ -28,7 +28,7 @@ export default {
   props: {
     thumbnail: {
       type: String,
-      required: true
+      default: () => ''
     },
     height: {
       type: Number,
