@@ -134,7 +134,8 @@ const mutations = {
   },
   add(state, { key, data }) {
     const index = state[key].findIndex(({ id }) => id === data.id);
-    if (index) {
+
+    if (index >= 0) {
       state[key].splice(index, 1, data);
     } else {
       state[key].push(data);
