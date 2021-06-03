@@ -20,11 +20,11 @@
 import { computed } from 'vue';
 
 export default {
-  name: 'BookImage',
+  name: 'MovieImage',
   props: {
     thumbnail: {
       type: String,
-      required: true
+      default: () => ''
     },
     height: {
       type: Number,

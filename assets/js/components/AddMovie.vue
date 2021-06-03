@@ -17,43 +17,25 @@
 
     <div v-show="!state.fetchingDetails">
       <h3 v-show="state.showMovieOptions" class="font-bold">Movies</h3>
-      <div 
+      <MovieOption 
         v-show="state.showMovieOptions"
         @click="movieSelected(i)"
-        :key="i" v-for="(movie, i) in state.movieOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
-        <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
-          <img :src="movie.thumbnail" width="50" height="50">
-        </div>
-        <div class="flex w-3/5 md:w3/4 text-gray-600">
-          <span>
-            {{ movie.title }}
-          </span>
-        </div>
-      </div>
+        :key="i" v-for="(movie, i) in state.movieOptions"
+        :item="movie" />
 
       <h3 v-show="state.showMovieOptions" class="font-bold">TV shows</h3>
-      <div 
+      <MovieOption 
         v-show="state.showTvOptions"
         @click="tvSelected(i)"
-        :key="i" v-for="(movie, i) in state.tvOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
-        <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
-          <img :src="movie.thumbnail" width="50" height="50">
-        </div>
-        <div class="flex w-3/5 md:w3/4 text-gray-600">
-          <span>
-            {{ movie.title }}
-          </span>
-        </div>
-      </div>
+        :key="i" v-for="(movie, i) in state.tvOptions"
+        :item="movie" />
 
       <p v-show="state.showUnsuccessfulSearchMessage">No movies or tv shows found</p>
     </div>
     <h4 v-show="state.fetchingDetails" class="italic">Fetching details...</h4>
 
     <div v-show="state.movieSelected" class="flex flex-col">
-      <img class="mb-2 mt-2" v-show="state.hasThumbnail" :src="state.form.thumbnail" width="150" height="150">
+      <MovieOption v-show="state.hasThumbnail" :item="state.form" />
       <button @click="saveMovie" class="btn btn-blue mt-3">Save</button>
     </div>
   </div>
@@ -64,12 +46,14 @@ import { useStore } from 'vuex';
 import axios from 'axios';
 import Input from './Input.vue';
 import CloseButton from './CloseButton.vue';
+import MovieOption from './MovieOption.vue';
 
 export default {
   name: 'AddMovie',
   components: {
     Input,
-    CloseButton
+    CloseButton,
+    MovieOption
   },
   props: {
     listId: {
@@ -121,13 +105,21 @@ export default {
     const getMovieOptions = (str) => axios
       .get(searchUrl(str, 'movie'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, title }) => ({ thumbnail: `${imgPrefix}${poster_path}`, id, title, tv: false })))
+        .map(({ poster_path, id, title }) => {
+          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
+          return { thumbnail, id, title, tv: false };
+        })
+      )
       .catch(() => ([]));
     
     const getTvOptions = (str) => axios
       .get(searchUrl(str, 'tv'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, name }) => ({ thumbnail: `${imgPrefix}${poster_path}`, id, title: name, tv: true })))
+        .map(({ poster_path, id, name }) => {
+          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
+          return { thumbnail, id, title: name, tv: true };
+        })
+      )
       .catch(() => ([]));
 
     const searchForMoviesAndTv = () => {
