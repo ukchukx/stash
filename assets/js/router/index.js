@@ -11,6 +11,12 @@ import Signup from '../components/Signup.vue';
 
 const routes = [
   {
+    path: '/',
+    redirect: {
+      name: 'MovieLists'
+    }
+  },
+  {
     path: '/ml',
     name: 'MovieLists',
     component: MovieLists
