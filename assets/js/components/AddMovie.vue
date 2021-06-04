@@ -144,7 +144,10 @@ export default {
       }, 500);
     };
 
-    const onClose = () => emit('closed');
+    const onClose = () => {
+      state.form.title = '';
+      emit('closed');
+    };
 
     const updateTags = (tags) => {
       state.form.tags = tags;
