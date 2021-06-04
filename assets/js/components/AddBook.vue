@@ -118,7 +118,24 @@ export default {
           });
       }, 500);
     };
-    const onClose = () => emit('closed');
+
+    const resetState = () => {
+      state.form = {
+        title: '',
+        isbn: '',
+        list_id: props.listId,
+        thumbnail: null
+      };
+      state.options = [];
+      state.searching = false;
+      state.searched = false;
+      state.bookSelected = false;
+    };
+
+    const onClose = () => {
+      resetState();
+      emit('closed');
+    };
 
     const bookSelected = (index) => {
       const book = state.options[index];

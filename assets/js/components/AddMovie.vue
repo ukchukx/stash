@@ -64,7 +64,6 @@ export default {
   emits: ['closed'],
   setup(props, { emit }) {
     const store = useStore();
-    const currentYear = new Date().getFullYear();
     const tmdbBaseUrl = 'https://api.themoviedb.org/3/';
     const imgPrefix = 'https://image.tmdb.org/t/p/w200';
     let timeout;
@@ -74,7 +73,6 @@ export default {
       searched: false,
       movieSelected: false,
       fetchingDetails: false,
-      tag: '',
       form: {
         title: '',
         imdb_id: '',
@@ -132,7 +130,6 @@ export default {
         state.searching = true;
         state.searched = false;
         state.movieSelected = false;
-        state.options = [];
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
             state.options = movies.concat(shows);
@@ -144,8 +141,21 @@ export default {
       }, 500);
     };
 
+    const resetState = () => {
+      state.form = {
+        title: '',
+        imdb_id: '',
+        list_id: props.listId,
+        thumbnail: null
+      };
+      state.options = [];
+      state.searching = false;
+      state.searched = false;
+      state.movieSelected = false;
+    };
+
     const onClose = () => {
-      state.form.title = '';
+      resetState();
       emit('closed');
     };
 
