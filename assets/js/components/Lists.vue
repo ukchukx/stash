@@ -36,11 +36,8 @@ export default {
     });
     state.canAddList = computed(() => !!state.form.name);
 
-    const addList = () => {};
-
     return {
-      state,
-      addList
+      state
     };
   }
 };

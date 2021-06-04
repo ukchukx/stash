@@ -23,6 +23,7 @@ const getters = {
   bookLists: ({ lists }) => lists.filter(({ type }) => type === 'book'),
   movies: ({ movies }) => movies,
   books: ({ books }) => books,
+  lists: ({ lists }) => lists,
   list: ({ lists }) => (id) => lists.find((list) => list.id === id),
   book: ({ books }) => (id) => books.find((book) => book.id === id),
   movie: ({ movies }) => (id) => movies.find((movie) => movie.id === id),
@@ -72,7 +73,13 @@ const actions = {
         return data;
       });
   },
-  createMovie ({ commit }, data) {
+  createMovie ({ commit, getters }, data) {
+    const existingMovie = getters
+      .moviesForList(data.list_id)
+      .find(({ title }) => data.title === title);
+
+    if (existingMovie) return Promise.resolve(existingMovie);
+
     return createResource('movies', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'movies', data });
@@ -101,6 +108,12 @@ const actions = {
       });
   },
   createBook ({ commit }, data) {
+    const existingBook = getters
+      .booksForList(data.list_id)
+      .find(({ title }) => data.title === title);
+
+    if (existingBook) return Promise.resolve(existingBook);
+
     return createResource('books', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'books', data });

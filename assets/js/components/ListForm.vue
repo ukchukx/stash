@@ -52,7 +52,8 @@ export default {
         type: props.listType
       }
     });
-    state.canAddList = computed(() => !!state.form.name);
+    state.nameUsed = computed(() => store.getters.lists.some(({ name }) => name === state.form.name));
+    state.canAddList = computed(() => !!state.form.name && !state.nameUsed);
     state.buttonText = computed(() => props.list.id ? 'Update' : 'Create');
     state.command = computed(() => props.list.id ? 'updateList' : 'createList');
 
