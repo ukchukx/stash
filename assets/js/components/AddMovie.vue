@@ -23,7 +23,7 @@
         :key="i" v-for="(movie, i) in state.movieOptions"
         :item="movie" />
 
-      <h3 v-show="state.showMovieOptions" class="font-bold">TV shows</h3>
+      <h3 v-show="state.showTvOptions" class="font-bold">TV shows</h3>
       <MovieOption 
         v-show="state.showTvOptions"
         @click="tvSelected(i)"
@@ -89,8 +89,8 @@ export default {
     state.hasThumbnail = computed(() => state.form.thumbnail && state.form.thumbnail.length > 0);
     state.movieOptions = computed(() => state.options.filter(({ tv }) => !tv));
     state.tvOptions = computed(() => state.options.filter(({ tv }) => tv));
-    state.showMovieOptions = computed(() => state.movieOptions.length > 0 && !state.movieSelected);
-    state.showTvOptions = computed(() => state.tvOptions.length > 0 && !state.movieSelected);
+    state.showMovieOptions = computed(() => !!state.movieOptions.length && !state.movieSelected);
+    state.showTvOptions = computed(() => !!state.tvOptions.length && !state.movieSelected);
     state.hasOptions = computed(() => !!state.tvOptions.concat(state.movieOptions).length);
     state.showUnsuccessfulSearchMessage = computed(
       () => !state.hasOptions && !state.searching && state.searched
