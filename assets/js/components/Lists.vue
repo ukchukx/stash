@@ -4,7 +4,7 @@
     <ListForm :list-type="listType" />
   </div>
 
-  <List v-for="(list, i) in lists" :key="i" :list="list" />
+  <List v-for="(list, i) in lists" :key="list.id" :list="list" />
 </template>
 <script>
 import { computed, reactive } from 'vue';

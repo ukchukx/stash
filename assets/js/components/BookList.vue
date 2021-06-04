@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="grid grid-flow-row grid-cols-1 md:grid-cols-4 ml-8 sm:ml-0">
-      <BookItem v-for="(book, i) in state.filteredBooks" :key="i" :book="book" />
+      <BookItem v-for="(book, i) in state.filteredBooks" :key="book.id" :book="book" />
     </div>
     <EmptyList v-if="state.isEmpty" message="No books" :show-button="false" />
   </div>
