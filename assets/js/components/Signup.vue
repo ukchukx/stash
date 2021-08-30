@@ -113,7 +113,7 @@ export default {
 
     const submitForm = () => {
       state.errorMessage = '';
-      axios.post('/signup', state.form)
+      axios.post('/api/signup', state.form)
       .then(({ data: { created } }) => {
         if (created) {
           router.push({ name: 'MovieLists' });
