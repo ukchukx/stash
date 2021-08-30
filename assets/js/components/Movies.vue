@@ -8,7 +8,7 @@
       <EmptyList v-else message="List is empty" @add-item-clicked="showAddMovieView" />
     </div>
 
-    <div v-show="state.showNew">
+    <div v-if="state.showNew">
       <AddMovie @closed="closeAddMovieView" :list-id="state.listId" />
     </div>
   </Page>

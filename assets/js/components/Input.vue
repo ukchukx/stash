@@ -5,6 +5,7 @@
       {{ label }}
     </label>
     <input
+      ref="inputElement"
       @keyup.enter="enterPressed"
       v-model="input"
       :name="name"
@@ -15,7 +16,7 @@
   </div>
 </template>
 <script>
-import { computed, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import useInputValidator from '../features/useInputValidator';
 import InputErrors from './InputErrors.vue';
 
@@ -56,6 +57,10 @@ export default {
     showErrors: {
       type: Boolean,
       default: () => true
+    },
+    focus: {
+      type: Boolean,
+      default: () => false
     }
   },
   emits: ['update:modelValue', 'errors', 'enter-pressed'],
@@ -66,6 +71,7 @@ export default {
       (value) => emit('update:modelValue', value)
     );
     const enterPressed = () => emit('enter-pressed');
+    const inputElement = ref(null);
     
     let defaultClasses = `shadow appearance-none border rounded py-2 px-3 text-gray-700 ${props.extraInputClasses}`;
     defaultClasses = `${defaultClasses} focus:outline-none leading-tight`;
@@ -88,8 +94,16 @@ export default {
       { immediate: true }
     );
 
+    onMounted(() => {
+      if (!props.focus || !inputElement.value) return;
+      
+      inputElement.value.focus();
+      inputElement.value.scrollIntoView();
+    });
+
     return {
       input,
+      inputElement,
       errors,
       classes,
       enterPressed

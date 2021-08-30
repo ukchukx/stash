@@ -8,7 +8,7 @@
       <EmptyList v-else rmessage="List is empty" @add-item-clicked="showAddBookView" />
     </div>
     
-    <div v-show="state.showNew">
+    <div v-if="state.showNew">
       <AddBook :list-id="state.listId" @closed="closeAddBookView" />
     </div>
   </Page>
