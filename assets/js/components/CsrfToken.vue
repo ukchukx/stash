@@ -7,12 +7,22 @@ import { onMounted, ref } from 'vue';
 
 export default {
   name: 'CsrfToken',
-  setup() {
+  props: {
+    modelValue: {
+      type: String,
+      default: () => ''
+    }
+  },
+  emits: ['update:modelValue'],
+  setup(_props, { emit }) {
     const csrfToken = ref('');
 
     onMounted(() => {
       const meta = document.head.querySelector('meta[name="csrf-token"]');
-      if (meta) csrfToken.value = meta.content;
+      if (meta) {
+        csrfToken.value = meta.content;
+        emit('update:modelValue', meta.content);
+      }
     });
 
     return {

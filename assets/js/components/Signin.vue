@@ -8,7 +8,7 @@
           method="POST" 
           ref="form" 
           class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <CsrfToken />
+          <CsrfToken v-model="state.form._csrf_token" />
 
           <Input 
             v-model="state.form.email"
@@ -81,7 +81,8 @@ export default {
     const state = reactive({
       form: {
         email: '', 
-        password: ''
+        password: '',
+        _csrf_token: ''
       },
       emailErrors: [],
       passwordErrors: [],
