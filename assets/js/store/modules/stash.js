@@ -106,7 +106,7 @@ const actions = {
         return data;
       });
   },
-  createBook ({ commit }, data) {
+  createBook ({ commit, getters }, data) {
     const existingBook = getters
       .booksForList(data.list_id)
       .find(({ title }) => data.title === title);
