@@ -22,6 +22,7 @@ const getters = {
   lists: ({ lists }) => lists,
   movies: ({ movies }) => movies,
   books: ({ books }) => books,
+  lists: ({ lists }) => lists,
   list: ({ lists }) => (id) => lists.find((list) => list.id === id),
   book: ({ books }) => (id) => books.find((book) => book.id === id),
   movie: ({ movies }) => (id) => movies.find((movie) => movie.id === id),
@@ -50,6 +51,13 @@ const actions = {
         return data;
       });
   },
+  updateList ({ commit }, data) {
+    return updateResource('lists', data)
+      .then(({ data: { data } }) => {
+        commit('add', { key: 'lists', data });
+        return data;
+      });
+  },
   deleteList ({ commit }, id) {
     return deleteResource('lists', id)
       .then(() => {
@@ -64,7 +72,13 @@ const actions = {
         return data;
       });
   },
-  createMovie ({ commit }, data) {
+  createMovie ({ commit, getters }, data) {
+    const existingMovie = getters
+      .moviesForList(data.list_id)
+      .find(({ title }) => data.title === title);
+
+    if (existingMovie) return Promise.resolve(existingMovie);
+
     return createResource('movies', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'movies', data });
@@ -93,6 +107,12 @@ const actions = {
       });
   },
   createBook ({ commit }, data) {
+    const existingBook = getters
+      .booksForList(data.list_id)
+      .find(({ title }) => data.title === title);
+
+    if (existingBook) return Promise.resolve(existingBook);
+
     return createResource('books', data)
       .then(({ data: { data } }) => {
         commit('add', { key: 'books', data });
@@ -126,7 +146,8 @@ const mutations = {
   },
   add(state, { key, data }) {
     const index = state[key].findIndex(({ id }) => id === data.id);
-    if (index) {
+
+    if (index >= 0) {
       state[key].splice(index, 1, data);
     } else {
       state[key].push(data);

@@ -66,7 +66,7 @@ export default {
   emits: ['update:modelValue', 'errors', 'enter-pressed'],
   setup(props, { emit }) {
     const { input, errors } = useInputValidator(
-      props.value, 
+      props.modelValue, 
       props.validators, 
       (value) => emit('update:modelValue', value)
     );
@@ -87,7 +87,7 @@ export default {
     );
 
     watch(
-      () => props.value,
+      () => props.modelValue,
       (newVal) => {
         if (newVal !== input.value) input.value = newVal;
       },

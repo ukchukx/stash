@@ -2,7 +2,7 @@
   <!-- eslint-disable -->
   <Page>
     <div class="flex justify-between px-6">
-      <NewListForm />
+      <ListForm />
     </div>
 
     <List v-for="(list, i) in lists" :key="i" :list="list" />
@@ -16,14 +16,14 @@ import { useStore } from 'vuex';
 import EmptyList from './EmptyList.vue';
 import Page from './Page.vue';
 import List from './List.vue';
-import NewListForm from './NewListForm.vue';
+import ListForm from './ListForm.vue';
 
 export default {
   name: 'Lists',
   components: {
     EmptyList,
     List,
-    NewListForm,
+    ListForm,
     Page
   },
   setup() {

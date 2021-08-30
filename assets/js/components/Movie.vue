@@ -4,15 +4,18 @@
     <div class="px-4 py-3 relative my-2 bg-white p-4 flex flex-col justify-between leading-normal">
       <div class="grid grid-flow-row auto-rows-max">
         <div class="mx-auto">
-          <MovieImage :thumbnail="movie.thumbnail" />
+          <MovieImage 
+            :width="250"
+            :height="250"
+            :thumbnail="state.movie.thumbnail" />
         </div>
         <div class="text-center">
-          <p class="font-thin text-2xl my-2">{{ movie.title }}</p>
+          <p class="font-thin text-2xl my-2">{{ state.movie.title }}</p>
         </div>
       </div>
 
       <div class="w-full mt-2">
-        <TagsInput v-model="form.tags" />
+        <TagsInput v-model="state.form.tags" />
       </div>
     </div>
     <div class="px-4 py-3 relative bg-white p-4 flex flex-col justify-between leading-normal">
@@ -23,7 +26,7 @@
   </Page>
 </template>
 <script>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 import TagsInput from './TagsInput.vue';
@@ -40,38 +43,39 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    const movieId = route.query.id;
     const listId = route.query.list;
-    const busy = ref(false);
-    const form = reactive({
-      tags: []
+    const state = reactive({
+      busy: false,
+      form: {
+        id: route.query.id,
+        tags: []
+      }
     });
 
-    const movie = computed(() => store.getters.movie(movieId));
-    const updateButtonText = computed(() => busy.value ? 'Updating...' : 'Update');
+    state.movie = computed(() => store.getters.movie(state.form.id));
+    const updateButtonText = computed(() => state.busy ? 'Updating...' : 'Update');
     const showUpdateButton = computed(
-      () => !movie.value ? false : form.tags !== movie.value.tags
+      () => !state.movie ? false : state.form.tags !== state.movie.tags
     );
 
     store.dispatch('fetchMovies', listId)
       .then(() => {
-        form.tags = movie.value.tags;
-        form.notes = movie.value.notes;
+        state.form.tags = state.movie.tags;
+        state.form.notes = state.movie.notes;
       });
 
     const updateMovie = () => {
-      if (busy.value) return;
+      if (state.busy) return;
 
-      busy.value = true;
-      store.dispatch('updateMovie', { ...form, id: movie.value.id })
+      state.busy = true;
+      store.dispatch('updateMovie', { ...state.form })
         .finally(() => {
-          busy.value = false;
+          state.busy = false;
         });
     };  
 
     return {
-      movie,
-      form,
+      state,
       showUpdateButton,
       updateMovie,
       updateButtonText

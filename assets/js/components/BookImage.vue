@@ -1,5 +1,10 @@
 <template>
-  <img v-if="isThumbnailPresent" :src="thumbnail" :width="width" :height="height">
+  <img 
+    class="rounded"
+    v-if="isThumbnailPresent" 
+    :src="thumbnail" 
+    :width="width" 
+    :height="height">
   <svg 
     v-else 
     :width="svgWidth" 
@@ -23,7 +28,7 @@ export default {
   props: {
     thumbnail: {
       type: String,
-      required: true
+      default: () => ''
     },
     height: {
       type: Number,

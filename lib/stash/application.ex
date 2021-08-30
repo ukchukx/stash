@@ -4,9 +4,14 @@ defmodule Stash.Application do
   @moduledoc false
 
   use Application
+  alias Stash.Support.SetupDatabase
 
   def start(_type, _args) do
     Confex.resolve_env!(:stash)
+
+    if Application.get_env(:stash, :env) != :test do
+      SetupDatabase.create_databases()
+    end
 
     children = [
       Stash.CommandedApp,
@@ -29,7 +34,10 @@ defmodule Stash.Application do
 
     case Supervisor.start_link(children, opts) do
       {:ok, _} = res ->
-        Stash.Support.SetupDatabase.run()
+        if Application.get_env(:stash, :env) != :test do
+          SetupDatabase.run_migrations()
+        end
+
         res
 
       err_res ->

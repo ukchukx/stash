@@ -55,18 +55,17 @@ defmodule Stash.UserTest do
     test "can be created" do
       assert {:ok, %User{lists: []} = user} = fixture(:user)
       params = build_list_params()
-      assert {:ok, %User{lists: [_list]}} = Accounts.create_list(params, %{user: user})
+      assert {:ok, _list} = Accounts.create_list(params, %{user: user})
     end
 
     test "can be updated" do
       {:ok, %User{lists: []} = user} = fixture(:user)
       params = build_list_params()
 
-      {:ok, %User{lists: [list = %{"type" => type}]}} =
-        Accounts.create_list(params, %{user: user})
+      {:ok, list = %{"type" => type}} = Accounts.create_list(params, %{user: user})
 
       params = build_list_params()
-      {:ok, %User{lists: [list]}} = Accounts.update_list(user, list["id"], params)
+      {:ok, list} = Accounts.update_list(user, list["id"], params)
       assert list["name"] == params.name
       assert list["type"] == type
     end
@@ -74,7 +73,7 @@ defmodule Stash.UserTest do
     test "can be deleted" do
       assert {:ok, %User{lists: []} = user} = fixture(:user)
       params = build_list_params()
-      assert {:ok, %User{lists: [list]}} = Accounts.create_list(params, %{user: user})
+      assert {:ok, list} = Accounts.create_list(params, %{user: user})
       assert :ok = Accounts.delete_list(user, list["id"])
       assert {:ok, %User{lists: []}} = Accounts.user_by_id(user.id)
     end

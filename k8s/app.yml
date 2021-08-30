@@ -17,10 +17,6 @@ spec:
     spec:
       imagePullSecrets:
       - name: headless-commerce-package-access-token
-      initContainers:
-      - name: check-db-ready
-        image: postgres:11.5
-        command: ['sh', '-c', 'until pg_isready -h stash-db -p 5432; do echo waiting for database; sleep 2; done;']
       containers:
       - name: stash
         image: ghcr.io/headless-commerce/stash
@@ -48,13 +44,13 @@ spec:
               name: stash-secrets
               key: dbPass
         - name: STASH_DB_HOST
-          value: 'stash-db'
+          value: 'postgresql'
         - name: STASH_DB_POOL_SIZE
           value: '10'
         - name: STASH_READ_DB
-          value: 'reads'
+          value: 'stash_reads'
         - name: STASH_EVENT_DB
-          value: 'events'
+          value: 'stash'
         - name: STASH_DNS_ADDR
           value: 'stash.moview.com.ng'
         - name: STASH_HTTP_PORT

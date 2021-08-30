@@ -3,10 +3,17 @@ defmodule Stash.Support.SetupDatabase do
   alias EventStore.Tasks.{Create, Init}
   require Logger
 
-  def run do
+  def create_databases do
     create_read_db()
     setup_event_store()
-    run_migrations()
+  end
+
+  def run_migrations do
+    Logger.info("Running read database migrations...")
+
+    path = Application.app_dir(:stash, "priv/repo/migrations")
+    Ecto.Migrator.run(Repo, path, :up, all: true)
+    Logger.info("Done running migrations")
   end
 
   defp create_read_db do
@@ -26,13 +33,5 @@ defmodule Stash.Support.SetupDatabase do
     config = event_store.config()
     Create.exec(config, [])
     Init.exec(event_store, config, [])
-  end
-
-  defp run_migrations do
-    Logger.info("Running read database migrations...")
-
-    path = Application.app_dir(:stash, "priv/repo/migrations")
-    Ecto.Migrator.run(Repo, path, :up, all: true)
-    Logger.info("Done running migrations")
   end
 end

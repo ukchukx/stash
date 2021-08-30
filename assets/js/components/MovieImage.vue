@@ -1,5 +1,10 @@
 <template>
-  <img v-if="isThumbnailPresent" :src="thumbnail" :width="width" :height="height">
+  <img 
+    class="rounded"
+    v-if="isThumbnailPresent" 
+    :src="thumbnail" 
+    :width="width" 
+    :height="height">
   <svg 
     v-else 
     :width="svgWidth" 
@@ -15,11 +20,11 @@
 import { computed } from 'vue';
 
 export default {
-  name: 'BookImage',
+  name: 'MovieImage',
   props: {
     thumbnail: {
       type: String,
-      required: true
+      default: () => ''
     },
     height: {
       type: Number,

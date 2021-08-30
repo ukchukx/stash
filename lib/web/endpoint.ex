@@ -23,8 +23,9 @@ defmodule Stash.Web.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :stash,
-    gzip: false,
-    only: ~w(app.css app.js app.js.map fonts favicon.ico robots.txt)
+    gzip: false
+
+  # only: ~w(app.css app.js app.js.map fonts favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

@@ -105,7 +105,8 @@ export default {
 
     const submitForm = () => { 
       state.errorMessage = '';
-      axios.post('/api/signin', state.form)
+      const token = document.head.querySelector('meta[name="csrf-token"]');
+      axios.post('/api/signin', state.form, { headers: { 'X-CSRF-TOKEN': token ? token.content : '' } })
       .then(({ data: { authenticated } }) => {
         if (authenticated) {
           router.push({ name: 'Lists' });

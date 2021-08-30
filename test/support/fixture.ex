@@ -10,11 +10,17 @@ defmodule Stash.Fixture do
   def fixture(:movie, attrs), do: create_movie(nil, attrs)
 
   def create_user_having_a_list(list_type) do
-    :user
-    |> fixture()
-    |> elem(1)
-    |> create_list(type: list_type)
-    |> elem(1)
+    user =
+      :user
+      |> fixture()
+      |> elem(1)
+
+    list =
+      user
+      |> create_list(type: list_type)
+      |> elem(1)
+
+    %{user | lists: [list]}
   end
 
   def create_user(attrs \\ []),

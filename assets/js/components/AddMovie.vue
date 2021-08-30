@@ -1,9 +1,7 @@
 <template>
   <!-- eslint-disable -->
   <div class="px-4 py-3 rounded relative mb-3 bg-white p-4 flex flex-col justify-between leading-normal">
-    <span @click="onClose" class="absolute top-0 bottom-0 right-0 px-4 py-3">
-      <svg class="ill-current h-6 w-6 text-black-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-    </span>
+    <CloseButton @click="onClose" />
     <Input 
       :focus="true"
       label="Title" 
@@ -20,43 +18,25 @@
 
     <div v-show="!state.fetchingDetails">
       <h3 v-show="state.showMovieOptions" class="font-bold">Movies</h3>
-      <div 
+      <MovieOption 
         v-show="state.showMovieOptions"
         @click="movieSelected(i)"
-        :key="i" v-for="(movie, i) in state.movieOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
-        <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
-          <img :src="movie.thumbnail" width="50" height="50">
-        </div>
-        <div class="flex w-3/5 md:w3/4 text-gray-600">
-          <span>
-            {{ movie.title }}
-          </span>
-        </div>
-      </div>
+        :key="i" v-for="(movie, i) in state.movieOptions"
+        :item="movie" />
 
-      <h3 v-show="state.showMovieOptions" class="font-bold">TV shows</h3>
-      <div 
+      <h3 v-show="state.showTvOptions" class="font-bold">TV shows</h3>
+      <MovieOption 
         v-show="state.showTvOptions"
         @click="tvSelected(i)"
-        :key="i" v-for="(movie, i) in state.tvOptions" 
-        class="flex-grow flex px-4 py-2 items-center border-b cursor-pointer">
-        <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
-          <img :src="movie.thumbnail" width="50" height="50">
-        </div>
-        <div class="flex w-3/5 md:w3/4 text-gray-600">
-          <span>
-            {{ movie.title }}
-          </span>
-        </div>
-      </div>
+        :key="i" v-for="(movie, i) in state.tvOptions"
+        :item="movie" />
 
       <p v-show="state.showUnsuccessfulSearchMessage">No movies or tv shows found</p>
     </div>
     <h4 v-show="state.fetchingDetails" class="italic">Fetching details...</h4>
 
     <div v-show="state.movieSelected" class="flex flex-col">
-      <img class="mb-2 mt-2" v-show="state.hasThumbnail" :src="state.form.thumbnail" width="150" height="150">
+      <MovieOption v-show="state.hasThumbnail" :item="state.form" />
       <button @click="saveMovie" class="btn btn-blue mt-3">Save</button>
     </div>
   </div>
@@ -66,11 +46,15 @@ import { computed, reactive, ref } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import Input from './Input.vue';
+import CloseButton from './CloseButton.vue';
+import MovieOption from './MovieOption.vue';
 
 export default {
   name: 'AddMovie',
   components: {
     Input,
+    CloseButton,
+    MovieOption
   },
   props: {
     listId: {
@@ -82,7 +66,6 @@ export default {
   setup(props, { emit }) {
     const titleInput = ref(null);
     const store = useStore();
-    const currentYear = new Date().getFullYear();
     const tmdbBaseUrl = 'https://api.themoviedb.org/3/';
     const imgPrefix = 'https://image.tmdb.org/t/p/w200';
     let timeout;
@@ -92,7 +75,6 @@ export default {
       searched: false,
       movieSelected: false,
       fetchingDetails: false,
-      tag: '',
       form: {
         title: '',
         imdb_id: '',
@@ -107,8 +89,8 @@ export default {
     state.hasThumbnail = computed(() => state.form.thumbnail && state.form.thumbnail.length > 0);
     state.movieOptions = computed(() => state.options.filter(({ tv }) => !tv));
     state.tvOptions = computed(() => state.options.filter(({ tv }) => tv));
-    state.showMovieOptions = computed(() => state.movieOptions.length > 0 && !state.movieSelected);
-    state.showTvOptions = computed(() => state.tvOptions.length > 0 && !state.movieSelected);
+    state.showMovieOptions = computed(() => !!state.movieOptions.length && !state.movieSelected);
+    state.showTvOptions = computed(() => !!state.tvOptions.length && !state.movieSelected);
     state.hasOptions = computed(() => !!state.tvOptions.concat(state.movieOptions).length);
     state.showUnsuccessfulSearchMessage = computed(
       () => !state.hasOptions && !state.searching && state.searched
@@ -123,13 +105,21 @@ export default {
     const getMovieOptions = (str) => axios
       .get(searchUrl(str, 'movie'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, title }) => ({ thumbnail: `${imgPrefix}${poster_path}`, id, title, tv: false })))
+        .map(({ poster_path, id, title }) => {
+          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
+          return { thumbnail, id, title, tv: false };
+        })
+      )
       .catch(() => ([]));
     
     const getTvOptions = (str) => axios
       .get(searchUrl(str, 'tv'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, name }) => ({ thumbnail: `${imgPrefix}${poster_path}`, id, title: name, tv: true })))
+        .map(({ poster_path, id, name }) => {
+          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
+          return { thumbnail, id, title: name, tv: true };
+        })
+      )
       .catch(() => ([]));
 
     const searchForMoviesAndTv = () => {
@@ -142,7 +132,6 @@ export default {
         state.searching = true;
         state.searched = false;
         state.movieSelected = false;
-        state.options = [];
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
             state.options = movies.concat(shows);
@@ -154,7 +143,23 @@ export default {
       }, 500);
     };
 
-    const onClose = () => emit('closed');
+    const resetState = () => {
+      state.form = {
+        title: '',
+        imdb_id: '',
+        list_id: props.listId,
+        thumbnail: null
+      };
+      state.options = [];
+      state.searching = false;
+      state.searched = false;
+      state.movieSelected = false;
+    };
+
+    const onClose = () => {
+      resetState();
+      emit('closed');
+    };
 
     const updateTags = (tags) => {
       state.form.tags = tags;

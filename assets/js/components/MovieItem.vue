@@ -1,13 +1,13 @@
 <template>
   <!-- eslint-disable -->
-  <div class="flex-grow flex px-4 py-2 items-center border-b">
-    <div class="w-2/5 xl:w-1/4 px-4 flex items-center">
+  <div class="px-4 py-2 items-center">
+    <div>
       <a :href="movieHref">
-        <MovieImage :thumbnail="movie.thumbnail" />
+        <MovieImage :thumbnail="movie.thumbnail" :width="250" :height="250" />
       </a>
     </div>
-    <div class="flex w-3/5 md:w3/4 text-gray-600">
-      <a :href="movieHref">
+    <div class="mt-2 text-center text-gray-600">
+      <a :href="movieHref" class="truncate">
         {{ movie.title }}
       </a>
       <a href="javascript:;" @click="deleteMovie" class="ml-auto">
