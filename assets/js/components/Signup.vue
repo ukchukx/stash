@@ -116,7 +116,7 @@ export default {
       axios.post('/api/signup', state.form)
       .then(({ data: { created } }) => {
         if (created) {
-          router.push({ name: 'MovieLists' });
+          router.push({ name: 'Lists' });
         } else {
           state.errorMessage = 'Could not create account';
         }

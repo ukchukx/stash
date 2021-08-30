@@ -1,46 +1,41 @@
 <template>
   <!-- eslint-disable -->
-  <div class="flex justify-between px-6">
-    <NewListForm :list-type="listType" />
-  </div>
+  <Page>
+    <div class="flex justify-between px-6">
+      <NewListForm />
+    </div>
 
-  <List v-for="(list, i) in lists" :key="i" :list="list" />
+    <List v-for="(list, i) in lists" :key="i" :list="list" />
+
+    <EmptyList v-if="isEmpty" message="You have no lists" />
+  </Page>
 </template>
 <script>
-import { computed, reactive } from 'vue';
+import { computed, onBeforeMount } from 'vue';
+import { useStore } from 'vuex';
+import EmptyList from './EmptyList.vue';
+import Page from './Page.vue';
 import List from './List.vue';
 import NewListForm from './NewListForm.vue';
 
 export default {
   name: 'Lists',
   components: {
+    EmptyList,
     List,
-    NewListForm
+    NewListForm,
+    Page
   },
-  props: {
-    lists: {
-      type: Array,
-      required: true
-    },
-    listType: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    const state = reactive({
-      form: {
-        name: '',
-        type: props.listType
-      }
-    });
-    state.canAddList = computed(() => !!state.form.name);
+  setup() {
+    const store = useStore();
+    const lists = computed(() => store.getters.lists);
+    const isEmpty = computed(() => !lists.value.length);
 
-    const addList = () => {};
+    onBeforeMount(() => store.dispatch('fetchLists'));
 
     return {
-      state,
-      addList
+      lists,
+      isEmpty
     };
   }
 };

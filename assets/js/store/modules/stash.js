@@ -19,8 +19,7 @@ const state = {
 
 // getters
 const getters = {
-  movieLists: ({ lists }) => lists.filter(({ type }) => type === 'movie'),
-  bookLists: ({ lists }) => lists.filter(({ type }) => type === 'book'),
+  lists: ({ lists }) => lists,
   movies: ({ movies }) => movies,
   books: ({ books }) => books,
   list: ({ lists }) => (id) => lists.find((list) => list.id === id),

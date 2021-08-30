@@ -1,9 +1,8 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import Account from '../components/Account.vue';
-import MovieLists from '../components/MovieLists.vue';
-import BookLists from '../components/BookLists.vue';
 import Books from '../components/Books.vue';
 import Book from '../components/Book.vue';
+import Lists from '../components/Lists.vue';
 import Movies from '../components/Movies.vue';
 import Movie from '../components/Movie.vue';
 import Signin from '../components/Signin.vue';
@@ -11,14 +10,9 @@ import Signup from '../components/Signup.vue';
 
 const routes = [
   {
-    path: '/ml',
-    name: 'MovieLists',
-    component: MovieLists
-  },
-  {
-    path: '/bl',
-    name: 'BookLists',
-    component: BookLists
+    path: '/lists',
+    name: 'Lists',
+    component: Lists
   },
   {
     path: '/movies',

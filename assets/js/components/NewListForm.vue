@@ -8,6 +8,13 @@
         v-model="state.form.name"
         @keyup.enter="addList"
         :placeholder="placeholder">
+
+      <select 
+        class="appearance-none bg-transparent border-b border-blue-500 w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" 
+        v-model="state.form.type">
+        <option value="movie">Movie</option>
+        <option value="book">Book</option>
+      </select>
         
       <button 
         @click="addList"
@@ -33,10 +40,6 @@ export default {
     placeholder: {
       type: String,
       default: () => 'List name'
-    },
-    listType: {
-      type: String,
-      required: true
     }
   },
   setup(props) {
@@ -44,7 +47,7 @@ export default {
     const state = reactive({
       form: {
         name: '',
-        type: props.listType
+        type: 'movie'
       }
     });
     state.canAddList = computed(() => !!state.form.name);

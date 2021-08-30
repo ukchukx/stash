@@ -108,7 +108,7 @@ export default {
       axios.post('/api/signin', state.form)
       .then(({ data: { authenticated } }) => {
         if (authenticated) {
-          router.push({ name: 'MovieLists' });
+          router.push({ name: 'Lists' });
         } else {
           state.errorMessage = 'Invalid email/password';
         }
