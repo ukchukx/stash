@@ -7,7 +7,7 @@
         <input v-model="state.searchText" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Search">
       </div>
     </div>
-    <div class="grid grid-flow-row grid-cols-1 md:grid-cols-4 ml-8 sm:ml-0">
+    <div class="grid grid-flow-row grid-cols-2 md:grid-cols-5 ml-8 sm:ml-0">
       <MovieItem v-for="(movie, i) in state.filteredMovies" :key="movie.id" :movie="movie" />
     </div>
     <EmptyList v-if="state.isEmpty" message="No movies" :show-button="false" />

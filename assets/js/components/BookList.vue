@@ -7,7 +7,7 @@
         <input v-model="state.searchText" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Search">
       </div>
     </div>
-    <div class="grid grid-flow-row grid-cols-1 md:grid-cols-4 ml-8 sm:ml-0">
+    <div class="grid grid-flow-row grid-cols-2 md:grid-cols-5 ml-8 sm:ml-0">
       <BookItem v-for="(book, i) in state.filteredBooks" :key="book.id" :book="book" />
     </div>
     <EmptyList v-if="state.isEmpty" message="No books" :show-button="false" />
