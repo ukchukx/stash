@@ -10,6 +10,10 @@ import Signup from '../components/Signup.vue';
 
 const routes = [
   {
+    path: '/',
+    redirect: '/lists'
+  },
+  {
     path: '/lists',
     name: 'Lists',
     component: Lists
