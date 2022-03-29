@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stash
-  namespace: stash
   labels:
     app: stash
 spec:
@@ -69,9 +68,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  namespace: stash
   name: stash
-  release: kube-prometheus-stack
+  labels:
+    app: stash
+    release: kube-prometheus-stack
 spec:
   ports:
   - name: web
