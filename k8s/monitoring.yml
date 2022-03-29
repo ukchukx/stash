@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  namespace: stash
+  name: stash
+  labels:
+    app: stash
+    release: kube-prometheus-stack
+spec:
+  endpoints:
+  - port: web
+    interval: 30s
+    path: '/metrics'
+  namespaceSelector:
+    matchNames:
+    - stash
+  selector:
+    matchLabels:
+      app: stash
+      release: kube-prometheus-stack

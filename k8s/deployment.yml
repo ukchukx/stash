@@ -38,11 +38,6 @@ spec:
         env:
         - name: STASH_DB_USER
           value: 'stash'
-        - name: STASH_DB_PASS
-          valueFrom:
-            secretKeyRef:
-              name: stash-secrets
-              key: dbPass
         - name: STASH_DB_HOST
           value: 'postgresql'
         - name: STASH_DB_POOL_SIZE
@@ -65,12 +60,18 @@ spec:
             secretKeyRef:
               name: stash-secrets
               key: secretKeyBase
+        - name: STASH_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: stash-secrets
+              key: dbPass
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name: stash
   namespace: stash
+  name: stash
+  release: kube-prometheus-stack
 spec:
   ports:
   - name: web
@@ -78,49 +79,3 @@ spec:
     targetPort: 4000
   selector:
     app: stash
----
-
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: stash-web
-  namespace: stash
-spec:
-  entryPoints:
-    - web
-  routes:
-  - kind: Rule
-    match: Host(`stash.moview.com.ng`)
-    services:
-    - name: stash
-      port: 80
-    middlewares:
-    - name: security
-      namespace: default
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: stash-web-tls
-  namespace: stash
-spec:
-  entryPoints:
-    - websecure
-  routes:
-  - kind: Rule
-    match: Host(`stash.moview.com.ng`)
-    services:
-    - name: stash
-      port: 80
-    middlewares:
-    - name: security
-      namespace: default
-  tls:
-    certResolver: le
-    domains:
-    - main: "moview.com.ng"
-      sans:
-      - "*.moview.com.ng"
-    options:
-      name: mytlsoption
-      namespace: default

@@ -36,4 +36,3 @@ node_modules/
 .env*
 .idea/
 *.iml
-k8s/secrets.yml
