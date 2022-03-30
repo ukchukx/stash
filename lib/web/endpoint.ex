@@ -20,7 +20,6 @@ defmodule Stash.Web.Endpoint do
   plug Stash.Web.Plug.LivenessProbe
   plug Stash.Web.Plug.ReadinessProbe
 
-
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
