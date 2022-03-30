@@ -16,6 +16,11 @@ defmodule Stash.Web.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
+  # Handle health checks
+  plug Stash.Web.Plug.LivenessProbe
+  plug Stash.Web.Plug.ReadinessProbe
+
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest

@@ -48,7 +48,6 @@ defmodule Stash.MixProject do
       {:faker, "~> 0.13", only: :test},
       {:floki, ">= 0.0.0", only: :test},
       {:gettext, "~> 0.11"},
-      {:healthchex, "~> 0.2"},
       {:jason, "~> 1.0"},
       {:phoenix, "~> 1.5.0"},
       {:phoenix_ecto, "~> 4.1"},
