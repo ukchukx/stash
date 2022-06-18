@@ -5,7 +5,7 @@
       <ListForm />
     </div>
 
-    <List v-for="(list, i) in lists" :key="i" :list="list" />
+    <List v-for="list in lists" :key="list.id" :list="list" />
 
     <EmptyList v-if="isEmpty" message="You have no lists" />
   </Page>

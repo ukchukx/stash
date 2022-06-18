@@ -58,7 +58,7 @@ export default {
   setup(props, { emit }) {
     const store = useStore();
     const currentYear = new Date().getFullYear();
-    const bookSearchBaseUrl = 'https://www.googleapis.com/books/v1/volumes?fields=items(volumeInfo(title,imageLinks(thumbnail),industryIdentifiers))&q=title:';
+    const bookSearchBaseUrl = 'https://www.googleapis.com/books/v1/volumes?fields=items(volumeInfo(title,imageLinks(thumbnail),publishedDate,industryIdentifiers))&q=title:';
     let timeout;
     const state = reactive({
       options: [],
@@ -103,11 +103,14 @@ export default {
           .then(({ data: { items } }) => {
             state.options = items
               .map(({ volumeInfo }) => {
-                const { title, imageLinks, industryIdentifiers } = volumeInfo;
+                const { title, publishedDate, imageLinks, industryIdentifiers } = volumeInfo;
+                let [year] = publishedDate.split('-');
+                year = parseInt(year);
                 const thumbnail = imageLinks && imageLinks.thumbnail ? imageLinks.thumbnail : null;
-                return { title, thumbnail, isbn: getIsbn(industryIdentifiers) };
+                return { title, thumbnail, isbn: getIsbn(industryIdentifiers), year };
               })
               .filter(({ isbn }) => !!isbn);
+            state.options.sort((a, b) => b.year - a.year);
           })
           .catch((response) => {
             console.warn('error', response);
@@ -143,6 +146,7 @@ export default {
       state.form.title = book.title;
       state.form.thumbnail = book.thumbnail;
       state.form.isbn = book.isbn;
+      state.form.year = book.year;
       state.bookSelected = true;
     };
 

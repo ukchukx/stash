@@ -105,9 +105,11 @@ export default {
     const getMovieOptions = (str) => axios
       .get(searchUrl(str, 'movie'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, title }) => {
+        .map(({ poster_path, id, title, release_date }) => {
+          let [year] = release_date.split('-');
+          year = parseInt(year);
           const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
-          return { thumbnail, id, title, tv: false };
+          return { thumbnail, id, title, tv: false, year };
         })
       )
       .catch(() => ([]));
@@ -115,9 +117,11 @@ export default {
     const getTvOptions = (str) => axios
       .get(searchUrl(str, 'tv'))
       .then(({ data: { results } }) => results
-        .map(({ poster_path, id, name }) => {
+        .map(({ poster_path, id, name, first_air_date }) => {
+          let [year] = first_air_date.split('-');
+          year = parseInt(year);
           const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
-          return { thumbnail, id, title: name, tv: true };
+          return { thumbnail, id, title: name, tv: true, year };
         })
       )
       .catch(() => ([]));
@@ -135,6 +139,7 @@ export default {
         Promise.all([getMovieOptions(title), getTvOptions(title)])
           .then(([movies, shows]) => {
             state.options = movies.concat(shows);
+            state.options.sort((a, b) => b.year - a.year);
           })
           .finally(() => {
             state.searching = false;
@@ -174,6 +179,7 @@ export default {
           state.form.title = movie.title;
           state.form.thumbnail = movie.thumbnail;
           state.form.imdb_id = imdb_id;
+          state.form.year = movie.year;
           state.movieSelected = true;
         })
         .catch(() => {

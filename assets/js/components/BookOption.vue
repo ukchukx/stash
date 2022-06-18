@@ -8,7 +8,7 @@
     </div>
     <div class="flex w-3/5 md:w3/4 text-gray-600">
       <span>
-        {{ item.title }}
+        {{ item.title }} ({{ item.year }})
       </span>
     </div>
   </div>
