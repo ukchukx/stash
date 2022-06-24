@@ -72,5 +72,4 @@ defmodule Stash.Web.Router do
 
     get "/*path", PageController, :catch_all
   end
-
 end

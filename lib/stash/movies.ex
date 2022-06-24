@@ -24,11 +24,17 @@ defmodule Stash.Movies do
     struct(UpdateMovie, attrs)
   end
 
-  def create_movie(%{imdb_id: imdb_id, list_id: list_id} = attrs, %{user: %{id: user_id}} = context) do
+  def create_movie(
+        %{imdb_id: imdb_id, list_id: list_id} = attrs,
+        %{user: %{id: user_id}} = context
+      ) do
     case find_movie_in_list(user_id, list_id, imdb_id) do
-      %{} = movie -> {:ok, movie}
+      %{} = movie ->
+        {:ok, movie}
+
       nil ->
         command = %{movie_id: id} = build_create_movie_command(attrs, context)
+
         command
         |> Commands.dispatch()
         |> case do
@@ -81,6 +87,6 @@ defmodule Stash.Movies do
   defp find_movie_in_list(user_id, list_id, imdb_id) do
     user_id
     |> movies_by_user_and_list(list_id)
-    |> Enum.find(& &1.imdb_id == imdb_id)
+    |> Enum.find(&(&1.imdb_id == imdb_id))
   end
 end

@@ -136,7 +136,7 @@ defmodule Stash.Web.PageController do
     attrs =
       params
       |> AtomizeKeys.atomize_string_keys()
-      |> Map.take([:title, :imdb_id, :list_id, :isbn, :thumbnail])
+      |> Map.take([:title, :list_id, :isbn, :thumbnail])
       |> Map.put(:user_id, user_id)
 
     with {:ok, book} <- Books.create_book(attrs, %{user: %{id: user_id}}) do

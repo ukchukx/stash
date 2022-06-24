@@ -158,7 +158,7 @@ defmodule Stash.Accounts do
     |> user_by_id()
     |> case do
       {:error, _} -> nil
-      {:ok, %{lists: lists}} -> Enum.find(lists, & &1["name"] == name)
+      {:ok, %{lists: lists}} -> Enum.find(lists, &(&1["name"] == name))
     end
   end
 end

@@ -26,7 +26,9 @@ defmodule Stash.Books do
 
   def create_book(%{isbn: isbn, list_id: list_id} = attrs, %{user: %{id: user_id}} = context) do
     case find_book_in_list(user_id, list_id, isbn) do
-      %{} = book -> {:ok, book}
+      %{} = book ->
+        {:ok, book}
+
       nil ->
         command = %{book_id: id} = build_create_book_command(attrs, context)
 
@@ -86,6 +88,6 @@ defmodule Stash.Books do
   defp find_book_in_list(user_id, list_id, isbn) do
     user_id
     |> books_by_user_and_list(list_id)
-    |> Enum.find(& &1.isbn == isbn)
+    |> Enum.find(&(&1.isbn == isbn))
   end
 end
