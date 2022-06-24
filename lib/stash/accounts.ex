@@ -91,8 +91,9 @@ defmodule Stash.Accounts do
     end
   end
 
-  def create_list(attrs = %{}, %{user: user = %{id: user_id}} = _context) do
-    with %{list_id: list_id} = command = user |> build_create_list_command(attrs),
+  def create_list(attrs = %{name: name}, %{user: user = %{id: user_id}} = _context) do
+    with nil <- find_list_by_name(user_id, name),
+         %{list_id: list_id} = command = user |> build_create_list_command(attrs),
          {:ok, _state} <- command |> Commands.dispatch() do
       user_id
       |> user_by_id()
@@ -103,6 +104,7 @@ defmodule Stash.Accounts do
         list -> {:ok, list}
       end
     else
+      %{} = list -> {:ok, list}
       reply -> reply
     end
   end
@@ -149,5 +151,14 @@ defmodule Stash.Accounts do
 
   defp get_list_from_user(_user = %{lists: lists}, list_id) do
     Enum.find(lists, &(&1["id"] == list_id))
+  end
+
+  defp find_list_by_name(user_id, name) do
+    user_id
+    |> user_by_id()
+    |> case do
+      {:error, _} -> nil
+      {:ok, %{lists: lists}} -> Enum.find(lists, & &1["name"] == name)
+    end
   end
 end
