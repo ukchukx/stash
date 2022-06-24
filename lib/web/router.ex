@@ -38,20 +38,6 @@ defmodule Stash.Web.Router do
     delete "/books/:id", PageController, :delete_book
   end
 
-  scope "/", Stash.Web do
-    pipe_through :browser
-
-    # live "/", PageLive, :index
-
-    get "/", PageController, :index
-
-    get "/signup", SessionController, :signup
-    get "/signin", SessionController, :signin
-    get "/signout", SessionController, :delete_session
-
-    get "/*path", PageController, :catch_all
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", Stash.Web do
   #   pipe_through :api
@@ -72,4 +58,19 @@ defmodule Stash.Web.Router do
       live_dashboard "/dashboard", metrics: Stash.Web.Telemetry
     end
   end
+
+  scope "/", Stash.Web do
+    pipe_through :browser
+
+    # live "/", PageLive, :index
+
+    get "/", PageController, :index
+
+    get "/signup", SessionController, :signup
+    get "/signin", SessionController, :signin
+    get "/signout", SessionController, :delete_session
+
+    get "/*path", PageController, :catch_all
+  end
+
 end
