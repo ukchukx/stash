@@ -96,6 +96,8 @@ export default {
       () => !state.hasOptions && !state.searching && state.searched
     );
 
+    const searchWithImdbIdUrl = (id) =>
+      `${tmdbBaseUrl}find/${id}?api_key=${state.tmdbToken}&external_source=imdb_id`;
     const searchUrl = (query, resource) =>
       `${tmdbBaseUrl}search/${resource}?api_key=${state.tmdbToken}&query=${encodeURI(query)}`;
     const movieDetailsUrl = (id) => `${tmdbBaseUrl}movie/${id}?api_key=${state.tmdbToken}`;
@@ -104,39 +106,47 @@ export default {
 
     const getMovieOptions = (str) => axios
       .get(searchUrl(str, 'movie'))
-      .then(({ data: { results } }) => results
-        .map(({ poster_path, id, title, release_date }) => {
-          let [year] = release_date.split('-');
-          year = parseInt(year);
-          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
-          return { thumbnail, id, title, tv: false, year };
-        })
-      )
+      .then(({ data: { results } }) => results.map(transformSearchResult(false)))
       .catch(() => ([]));
     
     const getTvOptions = (str) => axios
       .get(searchUrl(str, 'tv'))
-      .then(({ data: { results } }) => results
-        .map(({ poster_path, id, name, first_air_date }) => {
-          let [year] = first_air_date.split('-');
-          year = parseInt(year);
-          const thumbnail = poster_path ? `${imgPrefix}${poster_path}` : null;
-          return { thumbnail, id, title: name, tv: true, year };
-        })
-      )
+      .then(({ data: { results } }) => results.map(transformSearchResult(true)))
       .catch(() => ([]));
+
+    const getImdbIdOptions = (id) => axios
+      .get(searchWithImdbIdUrl(id))
+      .then(({ data: { movie_results, tv_results } }) => {
+        const movies = movie_results.map(transformSearchResult(false));
+        const shows = tv_results.map(transformSearchResult(true));
+        return movies.concat(shows);
+      })
+      .catch(() => ([]));
+
+    const transformSearchResult = (isTv) => 
+      (item) => {
+        const date = isTv ? item.first_air_date : item.release_date;
+        const title = isTv ? item.name : item.title;
+        let [year] = date.split('-');
+        year = parseInt(year);
+        const thumbnail = item.poster_path ? `${imgPrefix}${item.poster_path}` : null;
+        return { id: item.id, thumbnail, title, tv: isTv, year };
+      };
 
     const searchForMoviesAndTv = () => {
       if (state.disableSearchButton) return;
       if (timeout) clearTimeout(timeout);
-      const title = state.form.title.trim();
+      const titleOrImdbId = state.form.title.trim();
       
       timeout = setTimeout(() => {
         state.options = [];
         state.searching = true;
         state.searched = false;
         state.movieSelected = false;
-        Promise.all([getMovieOptions(title), getTvOptions(title)])
+        const promises = /tt\d+/.test(titleOrImdbId) ?
+          [getImdbIdOptions(titleOrImdbId), []] : [getMovieOptions(titleOrImdbId), getTvOptions(titleOrImdbId)];
+
+        Promise.all(promises)
           .then(([movies, shows]) => {
             state.options = movies.concat(shows);
             state.options.sort((a, b) => b.year - a.year);
